@@ -1,2 +1,8 @@
 bin/
 obj/
+Workspace/UnityProject/Library/
+Workspace/UnityProject/Temp/
+Workspace/UnityProject/Logs/
+Workspace/UnityProject/UserSettings/
+Workspace/UnityProject/obj/
+Workspace/unity-build.log

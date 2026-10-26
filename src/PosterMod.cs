@@ -101,7 +101,18 @@ namespace KitsunePosters
 
             var layout = PosterTiling.Compute(world, pos);
             PosterSurface.HideText(meshes);
-            float width = __instance.lineWidth;
+
+            // The image fills the board's face: the block extent, less a lip.
+            var block = __instance.Parent.TeData.Block;
+            float faceW = 1f, faceH = 1f;
+            if (block.isMultiBlock)
+            {
+                faceW = block.multiBlockPos.dim.x;
+                faceH = block.multiBlockPos.dim.y;
+            }
+            faceW -= 0.08f;
+            faceH -= 0.08f;
+
             PosterTextureManager.Get(url, tex =>
             {
                 if (tex == null)
@@ -111,7 +122,7 @@ namespace KitsunePosters
                     PosterSurface.ShowText(meshes);
                     return;
                 }
-                PosterSurface.Apply(meshes, tex, width, layout);
+                PosterSurface.Apply(meshes, tex, faceW, faceH, layout);
             });
             NudgeOthers(world, pos, layout);
         }

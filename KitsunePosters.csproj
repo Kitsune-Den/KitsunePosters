@@ -17,7 +17,7 @@
     <HarmonyDll Condition="'$(HarmonyDll)' == ''">C:/Users/adain/IdeaProjects/7d2d-v3.4-exp-ref/Mods/0_TFP_Harmony/0Harmony.dll</HarmonyDll>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="KitsunePosters/**" />
+    <Compile Remove="KitsunePosters/**;Workspace/**" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib"><HintPath>$(GameManaged)/mscorlib.dll</HintPath><Private>false</Private></Reference>

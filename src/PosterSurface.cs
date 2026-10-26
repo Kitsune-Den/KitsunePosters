@@ -24,7 +24,7 @@ namespace KitsunePosters
 
         private static Vector2[] baseUv;
 
-        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _width, PosterLayout _layout)
+        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout)
         {
             float w, h;
             if (_layout.Tiled)
@@ -34,13 +34,13 @@ namespace KitsunePosters
             }
             else
             {
-                // Fit the image into a square box of the sign's line width.
-                w = _width;
-                h = _width * ((float)_tex.height / _tex.width);
-                if (h > _width)
+                // Fit the image into the board's face, aspect kept.
+                w = _faceW;
+                h = _faceW * ((float)_tex.height / _tex.width);
+                if (h > _faceH)
                 {
-                    w = _width * ((float)_tex.width / _tex.height);
-                    h = _width;
+                    w = _faceH * ((float)_tex.width / _tex.height);
+                    h = _faceH;
                 }
             }
 

@@ -2,7 +2,7 @@
 <xml>
 	<Name value="KitsunePosters"/>
 	<DisplayName value="Kitsune Posters"/>
-	<Version value="0.3.0"/>
+	<Version value="0.4.0"/>
 	<Description value="Craftable poster blocks that show an image from a URL. Press E on a placed poster, paste an image link, done: every player gets custom posters with no server-side image packs and no image cap. Install on the server and every client."/>
 	<Author value="AdaInTheLab"/>
 	<Website value="https://kitsuneden.net/"/>

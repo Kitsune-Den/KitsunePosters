@@ -1,8 +1,16 @@
 <configs>
 	<append xpath="/recipes">
-		<recipe name="kitsunePosterWood1x1" count="1" craft_time="5">
+		<recipe name="kitsunePoster1x1" count="1" craft_time="5">
 			<ingredient name="resourceWood" count="8"/>
 			<ingredient name="resourcePaper" count="4"/>
+		</recipe>
+		<recipe name="kitsunePoster2x2" count="1" craft_time="10">
+			<ingredient name="resourceWood" count="16"/>
+			<ingredient name="resourcePaper" count="10"/>
+		</recipe>
+		<recipe name="kitsunePoster3x2" count="1" craft_time="15">
+			<ingredient name="resourceWood" count="24"/>
+			<ingredient name="resourcePaper" count="16"/>
 		</recipe>
 	</append>
 </configs>

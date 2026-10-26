@@ -40,7 +40,10 @@ namespace KitsunePosters
             }
             BlockValue bv = _world.GetBlock(_pos);
             string url = UrlAt(_world, _pos);
-            if (url == null || bv.rotation > 3)
+            // Multi-block posters don't tile: their cells are not 1m apart.
+            // NB isMultiBlock is true for ANY block that declares MultiBlockDim,
+            // "1,1,1" included (playerSignWood1x1 does), so check the dims.
+            if (url == null || bv.rotation > 3 || IsBiggerThanOneBlock(bv.Block))
             {
                 return layout;
             }
@@ -149,6 +152,20 @@ namespace KitsunePosters
                 return false;
             }
             return UrlAt(_world, _pos) == _url;
+        }
+
+        public static bool IsBiggerThanOneBlock(Block _block)
+        {
+            if (_block == null)
+            {
+                return true;
+            }
+            if (!_block.isMultiBlock)
+            {
+                return false;
+            }
+            var dim = _block.multiBlockPos.dim;
+            return dim.x != 1 || dim.y != 1 || dim.z != 1;
         }
 
         public static bool IsPosterBlock(BlockValue _bv)

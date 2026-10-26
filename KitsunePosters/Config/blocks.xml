@@ -1,16 +1,65 @@
 <configs>
 	<append xpath="/blocks">
 
-		<!-- Prototype: reuses the vanilla 1x1 wood sign model; the image quad
-		     covers the writing surface. A frameless custom model comes later. -->
-		<block name="kitsunePosterWood1x1">
+		<!-- Frameless poster boards (own bundle). The sign tile entity stores
+		     the URL; the DLL draws the image. Tiling across neighbours is for
+		     the 1x1 only - bigger walls, use the bigger posters. -->
+		<block name="kitsunePoster1x1">
 			<property name="Extends" value="playerSignWood1x1"/>
 			<property name="CreativeMode" value="Player"/>
-			<property name="CustomIcon" value="playerSignWood1x1"/>
-			<property name="DescriptionKey" value="kitsunePosterWood1x1Desc"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="110"/>
+					<property name="LineCount" value="3"/>
+					<property name="LineWidth" value="0.9"/>
+					<property name="LineSpacing" value="1"/>
+				</property>
+				<property class="TEFeatureLockable"/>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder1" value="B709"/>
+			<property name="SortOrder2" value="0000"/>
 			<property name="Group" value="Decor/Miscellaneous"/>
 			<property name="FilterTags" value="MC_playerBlocks,SC_decor"/>
+		</block>
+
+		<block name="kitsunePoster2x2">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="260"/>
+					<property name="LineCount" value="4"/>
+					<property name="LineWidth" value="1.8"/>
+					<property name="LineSpacing" value="1"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2x2"/>
+			<property name="MultiBlockDim" value="2,2,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
+			<property name="SortOrder2" value="0001"/>
+		</block>
+
+		<block name="kitsunePoster3x2">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="380"/>
+					<property name="LineCount" value="4"/>
+					<property name="LineWidth" value="2.8"/>
+					<property name="LineSpacing" value="1"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_3x2"/>
+			<property name="MultiBlockDim" value="3,2,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
+			<property name="SortOrder2" value="0002"/>
 		</block>
 
 	</append>

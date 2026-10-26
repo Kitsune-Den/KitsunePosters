@@ -13,7 +13,7 @@ namespace KitsunePosters
         public override string getHelp() =>
             "kpadmin wipe <x> <y> <z> [radius]  clear the poster text there (and around, with a radius)\n" +
             "kpadmin info <x> <y> <z>           show a poster's text and its tiling group\n" +
-            "kpadmin place <x> <y> <z>          put a poster block there (testing)\n" +
+            "kpadmin place <x> <y> <z> [block]  put a poster block there (testing)\n" +
             "kpadmin text <x> <y> <z> <text..>  set a poster's text server side (testing)\n" +
             "kpadmin load <x> <z>               keep that area loaded with no one there (testing)";
 
@@ -78,14 +78,15 @@ namespace KitsunePosters
                 }
                 case "place" when _params.Count >= 4 && TryPos(_params, out Vector3i placeAt):
                 {
-                    BlockValue bv = Block.GetBlockValue("kitsunePosterWood1x1");
+                    string blockName = _params.Count > 4 ? _params[4] : "kitsunePoster1x1";
+                    BlockValue bv = Block.GetBlockValue(blockName);
                     if (bv.isair)
                     {
-                        Out("Block kitsunePosterWood1x1 not known - is the mod's blocks.xml loaded?");
+                        Out($"Block {blockName} not known - is the mod's blocks.xml loaded?");
                         return;
                     }
                     world.SetBlockRPC(placeAt, bv);
-                    Out($"Poster placed at {placeAt}.");
+                    Out($"{blockName} placed at {placeAt}.");
                     return;
                 }
                 case "text" when _params.Count >= 5 && TryPos(_params, out Vector3i textAt):
