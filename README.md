@@ -49,17 +49,21 @@ Three frameless poster boards from the mod's own bundle, craftable from wood + p
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: prototype
+## Status: release candidate
 
-- Untested in game. First playtest checklist:
-  - Board on the right face of the block and facing the player? (`BoardSide` in `BuildPosters.cs`.)
-  - Image quad in front of the board, not inside it (`FaceOffset` in `PosterSurface.cs`); not mirrored (negate `localScale.x`).
-  - Shader pick (watch the log for `Using shader '...'`).
-  - Sign edit window accepts a full CDN URL (text length cap).
-  - Reload: leave the chunk, come back, poster should re-apply from cache.
-  - Tiling in the flesh: build a 2x3 wall of 1x1 posters with one URL, check the image spreads, isn't mirrored or reversed per facing (fix = the UDir table in `PosterTiling.cs`), and that seams line up.
-  - 2x2 / 3x2 boards render, are hittable/pickable (tag order), and show one image with no seams.
-- Verified on a live dedi via telnet: Settings.xml parsing, `kposters` and `kpadmin`, allowlist matching (subdomains pass; lookalikes, suffix spoofs and raw IPs blocked), the SetText prefix firing on a real server (disallowed URL rewritten to `[blocked: <host>]`), group detection with correct cells (incl. that multi-block posters don't try to tile), L-shape fallback, radius wipe, and all three blocks + the bundle parsing and placing clean.
+Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
+
+Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
+
+Still to see in game before release:
+- 2x2 / 3x2 boards (render, hit/pickup, one image, no seams).
+- Tiling wall of 1x1s: image spread, direction per facing (fix = the UDir table in `PosterTiling.cs`), seams.
+- `kposters off/on` live re-render; chunk reload re-applying from cache.
+- Allowlist block on a real multiplayer edit (dedi-verified already; belt and braces).
+
+Verified on a live dedi via telnet: Settings.xml parsing, `kposters` and `kpadmin`, allowlist matching (subdomains pass; lookalikes, suffix spoofs and raw IPs blocked), the SetText prefix firing on a real server (disallowed URL rewritten to `[blocked: <host>]`), group detection with correct cells (incl. that multi-block posters don't try to tile), L-shape fallback, radius wipe, and all three blocks + the bundle parsing and placing clean.
+
+Note for server owners: the mod raises the sign edit window's input cap from vanilla's 50 characters to 300 (URLs need it); this applies to all signs and writable crates.
 
 ## Build
 
