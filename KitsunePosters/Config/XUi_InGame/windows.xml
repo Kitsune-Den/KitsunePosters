@@ -4,4 +4,65 @@
 	     path only validates glyphs, not length, so a higher limit is safe.
 	     This raises it for every sign, writable crates included. -->
 	<set xpath="//window[@name='windowSignEditMultiline']//textfield[@name='input1']/@character_limit">300</set>
+
+	<!-- The clickable settings window: image toggle for everyone, the site
+	     allowlist for admins. Opened from a poster's E menu or kposters menu. -->
+	<append xpath="/windows">
+		<window name="windowKitsunePosterSettings" pos="400, 220" width="360" height="492" controller="KitsunePosterSettings, KitsunePosters" cursor_area="true">
+			<rect name="header" height="43" depth="1">
+				<headerbg />
+				<sprite depth="2" name="windowIcon" style="icon32px" pos="4,-5" sprite="ui_game_symbol_paint_brush"/>
+				<label style="header.name" text="POSTERS" width="200" />
+			</rect>
+			<rect name="content" pos="0,-46" height="400" depth="1">
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" pos="0,0" width="360" height="400" color="[black]" type="sliced" fillcenter="false" />
+				<sprite color="[darkGrey]" type="sliced" />
+
+				<rect name="toggleRow" depth="3" pos="6,-6" height="34">
+					<button name="btnToggle" sprite="menu_empty" width="348" height="34" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
+					<label depth="4" name="toggleLabel" pos="10,-6" width="330" height="24" font_size="24" text="Poster images on this PC: ON"/>
+				</rect>
+
+				<label depth="4" name="status" pos="8,-48" width="344" height="22" font_size="22" color="200,200,200,255" text="Asking the server..."/>
+
+				<label depth="4" name="row0" pos="16,-76"  width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row1" pos="16,-102" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row2" pos="16,-128" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row3" pos="16,-154" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row4" pos="16,-180" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row5" pos="16,-206" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row6" pos="16,-232" width="270" height="22" font_size="22" text=""/>
+				<label depth="4" name="row7" pos="16,-258" width="270" height="22" font_size="22" text=""/>
+				<rect depth="3" pos="300,-76"  height="22"><button name="btnRemove0" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-102" height="22"><button name="btnRemove1" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-128" height="22"><button name="btnRemove2" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-154" height="22"><button name="btnRemove3" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-180" height="22"><button name="btnRemove4" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-206" height="22"><button name="btnRemove5" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-232" height="22"><button name="btnRemove6" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+				<rect depth="3" pos="300,-258" height="22"><button name="btnRemove7" sprite="menu_empty" width="44" height="22" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="16,0" width="20" height="22" font_size="20" text="X"/></rect>
+
+				<textfield name="siteInput" pos="6,-288" width="240" height="34" font_size="24" character_limit="100" clear_button="true" virtual_keyboard_prompt="vkPromptSignText"/>
+				<rect depth="3" pos="252,-288" height="34">
+					<button name="btnAdd" sprite="menu_empty" width="102" height="34" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
+					<label depth="4" pos="8,-6" width="90" height="22" font_size="22" text="Allow site"/>
+				</rect>
+
+				<rect depth="3" pos="6,-330" height="32">
+					<button name="btnAllowAll" sprite="menu_empty" width="348" height="32" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
+					<label depth="4" pos="10,-5" width="330" height="22" font_size="22" text="Allow every site"/>
+				</rect>
+
+				<label depth="4" name="hint" pos="8,-368" width="344" height="28" font_size="20" color="170,170,170,255" text=""/>
+			</rect>
+			<rect name="btnClose" depth="3" pos="0,-450" height="42">
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
+				<sprite depth="2" name="background" pos="3,-3" sprite="menu_empty" width="354" height="36" color="[darkGrey]" type="sliced" />
+				<rect depth="3" pos="0,0" height="42">
+					<button name="btnCloseSettings" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0"/>
+					<label depth="2" name="windowName" pos="0,-1" justify="center" text="CLOSE" text_key="xuiClose" font_size="36" />
+				</rect>
+			</rect>
+		</window>
+	</append>
 </configs>

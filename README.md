@@ -21,6 +21,8 @@ Console command `kposters` (every player, runs on their own client):
 
 - `kposters` shows the current settings, `kposters on|off` toggles images on this machine (saved, applies to loaded posters at once), `kposters reload` re-reads Settings.xml, `kposters allow <url>` tests the allowlist.
 
+**Settings window** (for people who do not live in consoles): press E on any poster and pick "Poster settings", or type `kposters menu`. Everyone gets the poster-images on/off toggle for their own machine; the site allowlist shows for everyone and saves only for admins (the server checks permission level 0 on every change and the window says so otherwise). On a dedicated server the window talks to the server through a small Ask/Set/Tell package, so remote admins manage the list in game.
+
 Admin command `kpadmin` (permission 0, runs on the server):
 
 - `kpadmin domains` / `domains add <site>` / `domains remove <site>` / `domains allowall` shows and edits the allowlist in game; changes persist to Settings.xml and apply immediately. Adding the first real site drops a lone `*` (that is what starting an allowlist means); URLs pasted as the site are reduced to their host.

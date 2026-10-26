@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 
 namespace KitsunePosters
@@ -33,7 +34,44 @@ namespace KitsunePosters
             {
                 Log.Warning("[KitsunePosters] SetText overload not found - allowlist runs client side only.");
             }
-            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix).");
+            // The E menu's "Poster settings" entry on poster blocks.
+            var initCommands = AccessTools.Method(typeof(TEFeatureSignable), nameof(TEFeatureSignable.InitBlockActivationCommands));
+            var onActivated = AccessTools.Method(typeof(TEFeatureSignable), nameof(TEFeatureSignable.OnBlockActivated));
+            if (initCommands != null && onActivated != null)
+            {
+                harmony.Patch(initCommands, postfix: new HarmonyMethod(typeof(SignCommandsPatch), nameof(SignCommandsPatch.InitPostfix)));
+                harmony.Patch(onActivated, prefix: new HarmonyMethod(typeof(SignCommandsPatch), nameof(SignCommandsPatch.ActivatedPrefix)));
+            }
+            else
+            {
+                Log.Warning("[KitsunePosters] Activation command methods not found - settings window only via 'kposters menu'.");
+            }
+            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, E-menu commands).");
+        }
+    }
+
+    /// <summary>Adds "Poster settings" to a poster's E menu and opens the window on it.</summary>
+    public static class SignCommandsPatch
+    {
+        public static void InitPostfix(TEFeatureSignable __instance, Action<BlockActivationCommand, TileEntityComposite.EBlockCommandOrder, TileEntityFeatureData> _addCallback)
+        {
+            string blockName = __instance.Parent?.TeData?.Block?.GetBlockName();
+            if (blockName != null && blockName.StartsWith("kitsunePoster"))
+            {
+                _addCallback(new BlockActivationCommand("kposters", "wrench", _enabled: true),
+                    TileEntityComposite.EBlockCommandOrder.Normal, __instance.FeatureData);
+            }
+        }
+
+        public static bool ActivatedPrefix(ReadOnlySpan<char> _commandName, ref bool __result)
+        {
+            if (!_commandName.SequenceEqual("kposters".AsSpan()))
+            {
+                return true;
+            }
+            XUiC_KitsunePosterSettings.Open();
+            __result = true;
+            return false;
         }
     }
 

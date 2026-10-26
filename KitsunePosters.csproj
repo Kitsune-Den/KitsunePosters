@@ -13,8 +13,12 @@
          Override with:  dotnet build -p:GameManaged="D:/path/to/7DaysToDie_Data/Managed" -->
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <NoStdLib>true</NoStdLib>
+    <!-- Keep the SDK's net48 reference-assembly pack out: it would shadow the
+         game's mscorlib, which (being Unity Mono) actually has Span types. -->
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
     <GameManaged Condition="'$(GameManaged)' == ''">C:/Users/adain/IdeaProjects/7d2d-v3.4-exp-ref/7DaysToDieServer_Data/Managed</GameManaged>
     <HarmonyDll Condition="'$(HarmonyDll)' == ''">C:/Users/adain/IdeaProjects/7d2d-v3.4-exp-ref/Mods/0_TFP_Harmony/0Harmony.dll</HarmonyDll>
+    <FrameworkPathOverride>$(GameManaged)</FrameworkPathOverride>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="KitsunePosters/**;Workspace/**" />

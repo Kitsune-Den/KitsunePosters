@@ -14,6 +14,7 @@ namespace KitsunePosters
         public override string getDescription() => "KitsunePosters: toggle poster images on this client, reload settings";
 
         public override string getHelp() =>
+            "kposters menu         open the settings window\n" +
             "kposters              show the current settings\n" +
             "kposters on|off       show or hide poster images on THIS machine (saved)\n" +
             "kposters reload       re-read Settings.xml (allowlist)\n" +
@@ -24,6 +25,9 @@ namespace KitsunePosters
             string cmd = _params.Count > 0 ? _params[0].ToLowerInvariant() : "status";
             switch (cmd)
             {
+                case "menu":
+                    XUiC_KitsunePosterSettings.Open();
+                    return;
                 case "on":
                 case "off":
                     PosterSettings.SetShowRemoteImages(cmd == "on");

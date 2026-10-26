@@ -1,0 +1,7 @@
+<configs>
+	<append xpath="/xui">
+		<window_group name="kitsunePosterSettings" defaultselected="siteInput">
+			<window name="windowKitsunePosterSettings" />
+		</window_group>
+	</append>
+</configs>
