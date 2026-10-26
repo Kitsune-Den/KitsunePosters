@@ -1,0 +1,33 @@
+# KitsunePosters
+
+Craftable poster blocks for 7 Days to Die that display any image from a URL. Press E on a placed poster, paste an image link, and the poster shows it. No server-side image packs, no 69-image vanilla pool, no 255-paint cap: every player decorates with their own images and the server owner does nothing.
+
+## How it works
+
+The poster block is a sign under the hood (`TEFeatureSignable`), so the URL rides vanilla's own sign text: synced to every client and saved with the world, with zero custom netcode. A Harmony postfix on `TEFeatureSignable.RefreshTextMesh` spots an http(s) URL in the sign text on a `kitsunePoster*` block, downloads the image client side, hides the text mesh, and parents a textured quad to the text anchor. Ordinary signs are untouched.
+
+- Session + disk cache (`<user game data>/KitsunePosters/`), keyed by URL hash. Each image downloads once per machine, ever.
+- Caps: 5 MB per image, 4096px max dimension, 15 s timeout, PNG/JPG only. Failures show the sign text again so the URL can be fixed, and the URL is not retried that session.
+- Dedicated servers skip all of it (no renderer there); the server just syncs sign text like always.
+
+## Install
+
+DLL mod: EAC off, and the mod goes on the server **and every client**. Clients without it see a plain sign with the URL as text.
+
+## Status: prototype
+
+- One block: `kitsunePosterWood1x1` (craftable, 8 wood + 4 paper), reusing the vanilla 1x1 wood sign model. Frameless poster models and more sizes come later.
+- Untested in game. First playtest checklist:
+  - Quad visible and facing outward? If it is inside the board, flip `FaceOffset` in `PosterSurface.cs`. If the image is mirrored, negate `localScale.x`.
+  - Shader pick (watch the log for `Using shader '...'`).
+  - Sign edit window accepts a full CDN URL (text length cap).
+  - Reload: leave the chunk, come back, poster should re-apply from cache.
+- Planned before release: server-side domain allowlist, client toggle to disable remote images, admin command to wipe a poster, image tiling across adjacent posters sharing one URL.
+
+## Build
+
+```
+dotnet build
+```
+
+References the game's own assemblies from `7d2d-v3.4-exp-ref` (override with `-p:GameManaged=...`). The DLL lands in `KitsunePosters/` next to `ModInfo.xml`; that folder is the installable mod.

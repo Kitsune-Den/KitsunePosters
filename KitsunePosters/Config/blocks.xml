@@ -1,0 +1,17 @@
+<configs>
+	<append xpath="/blocks">
+
+		<!-- Prototype: reuses the vanilla 1x1 wood sign model; the image quad
+		     covers the writing surface. A frameless custom model comes later. -->
+		<block name="kitsunePosterWood1x1">
+			<property name="Extends" value="playerSignWood1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="CustomIcon" value="playerSignWood1x1"/>
+			<property name="DescriptionKey" value="kitsunePosterWood1x1Desc"/>
+			<property name="SortOrder1" value="B709"/>
+			<property name="Group" value="Decor/Miscellaneous"/>
+			<property name="FilterTags" value="MC_playerBlocks,SC_decor"/>
+		</block>
+
+	</append>
+</configs>

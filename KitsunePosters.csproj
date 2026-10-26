@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>KitsunePosters</AssemblyName>
+    <RootNamespace>KitsunePosters</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
+    <!-- Same setup as KitsuneHouseCat: the game's own net48 framework + engine DLLs.
+         Override with:  dotnet build -p:GameManaged="D:/path/to/7DaysToDie_Data/Managed" -->
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <NoStdLib>true</NoStdLib>
+    <GameManaged Condition="'$(GameManaged)' == ''">C:/Users/adain/IdeaProjects/7d2d-v3.4-exp-ref/7DaysToDieServer_Data/Managed</GameManaged>
+    <HarmonyDll Condition="'$(HarmonyDll)' == ''">C:/Users/adain/IdeaProjects/7d2d-v3.4-exp-ref/Mods/0_TFP_Harmony/0Harmony.dll</HarmonyDll>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="KitsunePosters/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib"><HintPath>$(GameManaged)/mscorlib.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System"><HintPath>$(GameManaged)/System.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Core"><HintPath>$(GameManaged)/System.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="netstandard"><HintPath>$(GameManaged)/netstandard.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp"><HintPath>$(GameManaged)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="LogLibrary"><HintPath>$(GameManaged)/LogLibrary.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(HarmonyDll)</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)/UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameManaged)/UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(GameManaged)/UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(GameManaged)/UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(GameManaged)/UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule"><HintPath>$(GameManaged)/UnityEngine.UnityWebRequestModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+  <!-- The mod folder is what gets installed: put the DLL next to ModInfo.xml. -->
+  <Target Name="CopyToModFolder" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)/KitsunePosters" />
+  </Target>
+</Project>

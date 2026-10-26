@@ -1,0 +1,3 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english
+kitsunePosterWood1x1,blocks,Block,,,Kitsune Poster (1x1)
+kitsunePosterWood1x1Desc,blocks,Block,,,"A poster that shows any image from the internet. Place it, press E, paste an image link (PNG or JPG, up to 5 MB) and the poster loads it. Clear the text to get a plain sign back."
