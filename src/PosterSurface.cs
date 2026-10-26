@@ -18,16 +18,36 @@ namespace KitsunePosters
 
         private static Shader posterShader;
 
-        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _width)
+        // A tiled cell fills the whole 1m block face so adjacent cells meet
+        // seamlessly and the image reads as one mural across the group.
+        private const float TiledCellSize = 1f;
+
+        private static Vector2[] baseUv;
+
+        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _width, PosterLayout _layout)
         {
-            // Fit the image into a square box of the sign's line width.
-            float w = _width;
-            float h = _width * ((float)_tex.height / _tex.width);
-            if (h > _width)
+            float w, h;
+            if (_layout.Tiled)
             {
-                w = _width * ((float)_tex.width / _tex.height);
-                h = _width;
+                w = TiledCellSize;
+                h = TiledCellSize;
             }
+            else
+            {
+                // Fit the image into a square box of the sign's line width.
+                w = _width;
+                h = _width * ((float)_tex.height / _tex.width);
+                if (h > _width)
+                {
+                    w = _width * ((float)_tex.width / _tex.height);
+                    h = _width;
+                }
+            }
+
+            float uSize = 1f / _layout.Cols;
+            float vSize = 1f / _layout.Rows;
+            float u0 = _layout.Col * uSize;
+            float v0 = _layout.Row * vSize;
 
             foreach (var mesh in _meshes)
             {
@@ -38,10 +58,23 @@ namespace KitsunePosters
                 SetTextVisible(mesh, false);
                 var quad = FindOrCreateQuad(mesh.transform);
                 quad.transform.localScale = new Vector3(w, h, 1f);
+                SetQuadUv(quad, u0, v0, uSize, vSize);
                 var renderer = quad.GetComponent<MeshRenderer>();
                 renderer.material.mainTexture = _tex;
                 renderer.enabled = true;
             }
+        }
+
+        private static void SetQuadUv(GameObject _quad, float _u0, float _v0, float _uSize, float _vSize)
+        {
+            var filter = _quad.GetComponent<MeshFilter>();
+            var mesh = filter.mesh; // per-quad instance; never write the shared primitive mesh
+            var uv = new Vector2[baseUv.Length];
+            for (int i = 0; i < uv.Length; i++)
+            {
+                uv[i] = new Vector2(_u0 + baseUv[i].x * _uSize, _v0 + baseUv[i].y * _vSize);
+            }
+            mesh.uv = uv;
         }
 
         public static void HideText(SmartTextMesh[] _meshes)
@@ -103,6 +136,12 @@ namespace KitsunePosters
 
             var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
             quad.name = QuadName;
+            if (baseUv == null)
+            {
+                // The primitive's pristine UVs, captured BEFORE anything touches
+                // .mesh (which would swap sharedMesh for the instance).
+                baseUv = quad.GetComponent<MeshFilter>().sharedMesh.uv;
+            }
             var collider = quad.GetComponent<Collider>();
             if (collider != null)
             {

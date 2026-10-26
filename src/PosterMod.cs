@@ -62,6 +62,10 @@ namespace KitsunePosters
 
     public static class SignRefreshPatch
     {
+        // While one poster's refresh is re-rendering its group, the members'
+        // own refreshes must not nudge further, or 2 posters ping-pong forever.
+        private static bool inGroupRefresh;
+
         public static void Postfix(TEFeatureSignable __instance)
         {
             if (GameManager.IsDedicatedServer)
@@ -82,15 +86,20 @@ namespace KitsunePosters
             }
             PosterRegistry.Track(__instance);
 
+            var world = GameManager.Instance.World;
+            Vector3i pos = __instance.Parent.ToWorldPos();
+
             // The raw text, not the filtered display text: the profanity filter
             // may touch the display copy, but the URL lives in the authored text.
             string url = PosterUrl.Extract(__instance.signText?.Text);
             if (url == null || !PosterSettings.ShowRemoteImages || !PosterSettings.IsDomainAllowed(url))
             {
                 PosterSurface.Clear(meshes);
+                NudgeOthers(world, pos, PosterTiling.Single);
                 return;
             }
 
+            var layout = PosterTiling.Compute(world, pos);
             PosterSurface.HideText(meshes);
             float width = __instance.lineWidth;
             PosterTextureManager.Get(url, tex =>
@@ -102,8 +111,46 @@ namespace KitsunePosters
                     PosterSurface.ShowText(meshes);
                     return;
                 }
-                PosterSurface.Apply(meshes, tex, width);
+                PosterSurface.Apply(meshes, tex, width, layout);
             });
+            NudgeOthers(world, pos, layout);
+        }
+
+        /// <summary>
+        /// Re-renders the posters this change may have regrouped: the group's
+        /// members, the in-plane neighbours, and THEIR groups (covers the
+        /// diagonal member of a former 2x2 after one cell changes).
+        /// </summary>
+        private static void NudgeOthers(World _world, Vector3i _pos, PosterLayout _layout)
+        {
+            if (inGroupRefresh || _world == null)
+            {
+                return;
+            }
+            inGroupRefresh = true;
+            try
+            {
+                var targets = new System.Collections.Generic.HashSet<Vector3i>();
+                targets.UnionWith(PosterTiling.Members(_world, _pos, _layout));
+                foreach (var n in PosterTiling.PosterNeighbours(_world, _pos))
+                {
+                    targets.Add(n);
+                    targets.UnionWith(PosterTiling.Members(_world, n, PosterTiling.Compute(_world, n)));
+                }
+                targets.Remove(_pos);
+                foreach (var p in targets)
+                {
+                    var signable = PosterTiling.SignableAt(_world, p);
+                    if (signable != null)
+                    {
+                        Postfix(signable);
+                    }
+                }
+            }
+            finally
+            {
+                inGroupRefresh = false;
+            }
         }
     }
 

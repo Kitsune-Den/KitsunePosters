@@ -4,6 +4,11 @@ namespace KitsunePosters
 {
     public class ConsoleCmdKPosters : ConsoleCmdAbstract
     {
+        // A per-machine display toggle: every player may use it, and it runs
+        // on their own client, not the server.
+        public override bool IsExecuteOnClient => true;
+        public override int DefaultPermissionLevel => 1000;
+
         public override string[] getCommands() => new[] { "kposters" };
 
         public override string getDescription() => "KitsunePosters: toggle poster images on this client, reload settings";
