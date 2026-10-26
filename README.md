@@ -23,6 +23,7 @@ Console command `kposters` (every player, runs on their own client):
 
 Admin command `kpadmin` (permission 0, runs on the server):
 
+- `kpadmin domains` / `domains add <site>` / `domains remove <site>` / `domains allowall` shows and edits the allowlist in game; changes persist to Settings.xml and apply immediately. Adding the first real site drops a lone `*` (that is what starting an allowlist means); URLs pasted as the site are reduced to their host.
 - `kpadmin wipe <x> <y> <z> [radius]` clears poster text at that spot or in a cube around it.
 - `kpadmin info <x> <y> <z>` shows a poster's text and its tiling group.
 - `kpadmin place / text / load` are testing helpers for driving posters from the server console.

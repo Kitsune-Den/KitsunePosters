@@ -11,6 +11,10 @@ namespace KitsunePosters
         public override string getDescription() => "KitsunePosters admin: wipe poster URLs, inspect posters";
 
         public override string getHelp() =>
+            "kpadmin domains                    show which sites posters may load images from\n" +
+            "kpadmin domains add <site>         allow a site (and its subdomains), e.g. imgur.com\n" +
+            "kpadmin domains remove <site>      stop allowing a site\n" +
+            "kpadmin domains allowall           allow every site (the default)\n" +
             "kpadmin wipe <x> <y> <z> [radius]  clear the poster text there (and around, with a radius)\n" +
             "kpadmin info <x> <y> <z>           show a poster's text and its tiling group\n" +
             "kpadmin place <x> <y> <z> [block]  put a poster block there (testing)\n" +
@@ -28,6 +32,22 @@ namespace KitsunePosters
             string cmd = _params.Count > 0 ? _params[0].ToLowerInvariant() : "";
             switch (cmd)
             {
+                case "domains" when _params.Count == 1:
+                    Out("Posters may load images from: " + PosterSettings.DomainsSummary);
+                    Out("(\"*\" means every site. kpadmin domains add/remove <site> changes it.)");
+                    return;
+                case "domains" when _params.Count >= 3 && _params[1].ToLowerInvariant() == "add":
+                    Out(PosterSettings.AddDomain(_params[2]));
+                    Out("Now allowed: " + PosterSettings.DomainsSummary);
+                    return;
+                case "domains" when _params.Count >= 3 && _params[1].ToLowerInvariant() == "remove":
+                    Out(PosterSettings.RemoveDomain(_params[2]));
+                    Out("Now allowed: " + PosterSettings.DomainsSummary);
+                    return;
+                case "domains" when _params.Count >= 2 && _params[1].ToLowerInvariant() == "allowall":
+                    PosterSettings.AllowAll();
+                    Out("Every site is allowed again.");
+                    return;
                 case "wipe" when _params.Count >= 4 && TryPos(_params, out Vector3i wipeAt):
                 {
                     int radius = 0;

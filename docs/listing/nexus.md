@@ -14,7 +14,7 @@ Place a poster, press E, paste an image link. The poster downloads the image on 
 
 ## For server owners
 
-- **Domain allowlist** (`Settings.xml`): restrict which sites posters may load from. A blocked URL is rewritten to `[blocked: domain]` in the sign text itself, server side, before it ever syncs.
+- **Domain allowlist**, no file editing needed: `kpadmin domains add imgur.com` in the console allows a site (and its subdomains), `remove` takes it away, `kpadmin domains` shows the list, `allowall` opens it back up. Changes save and apply at once. (`Settings.xml` works too.) A blocked URL is rewritten to `[blocked: domain]` in the sign text itself, server side, before it ever syncs.
 - **`kpadmin wipe <x> <y> <z> [radius]`**: clear any poster's link from the console, with an area option for cleaning up after someone.
 - **Hard caps** baked in: 5 MB per image, 4096px max, 15 second timeout, PNG/JPG only.
 - Images are fetched by each client directly, so the URL's host sees each player's IP, the same as posting a link in chat. The allowlist exists for exactly this.
