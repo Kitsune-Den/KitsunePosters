@@ -1,0 +1,7 @@
+<configs>
+	<!-- Vanilla caps sign input at 50 characters, which cuts most image URLs
+	     mid-id (found in playtest: ".../lazy-sunday-with-pulla-B"). The save
+	     path only validates glyphs, not length, so a higher limit is safe.
+	     This raises it for every sign, writable crates included. -->
+	<set xpath="//window[@name='windowSignEditMultiline']//textfield[@name='input1']/@character_limit">300</set>
+</configs>
