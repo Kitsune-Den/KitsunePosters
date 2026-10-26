@@ -179,7 +179,22 @@ namespace KitsunePosters
 
             var renderer = quad.GetComponent<MeshRenderer>();
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.material = new Material(PosterShader());
+
+            // Prefer a clone of the board's own LIT material (Standard, shipped
+            // in our bundle) so the image shades with the world instead of
+            // glowing like a lightbox at night. Unlit fallback for safety.
+            var board = _anchor.parent != null ? _anchor.parent.Find("Board") : null;
+            var boardRenderer = board != null ? board.GetComponent<MeshRenderer>() : null;
+            if (boardRenderer != null && boardRenderer.sharedMaterial != null)
+            {
+                var mat = new Material(boardRenderer.sharedMaterial);
+                mat.color = Color.white; // the board's dark tint would crush the image
+                renderer.material = mat;
+            }
+            else
+            {
+                renderer.material = new Material(PosterShader());
+            }
             return quad;
         }
 
