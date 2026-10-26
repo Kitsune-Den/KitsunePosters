@@ -178,10 +178,36 @@ namespace KitsunePosters
             {
                 if (token.StartsWith("http://") || token.StartsWith("https://"))
                 {
-                    return token.Trim();
+                    return Normalize(token.Trim());
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Players paste page links, not image links. The classic case is an
+        /// imgur PAGE (imgur.com/abc123), which serves HTML and can never
+        /// decode: rewrite it to the direct image (i.imgur.com/abc123.png,
+        /// which imgur serves in the right format whatever the original was).
+        /// Galleries and albums (/a/, /gallery/) can't be rewritten reliably.
+        /// </summary>
+        public static string Normalize(string _url)
+        {
+            try
+            {
+                var uri = new System.Uri(_url);
+                string host = uri.Host.ToLowerInvariant();
+                if (host == "imgur.com" || host == "www.imgur.com" || host == "m.imgur.com")
+                {
+                    string path = uri.AbsolutePath.Trim('/');
+                    if (path.Length > 0 && !path.Contains("/") && !path.Contains("."))
+                    {
+                        return "https://i.imgur.com/" + path + ".png";
+                    }
+                }
+            }
+            catch { }
+            return _url;
         }
 
         /// <summary>
