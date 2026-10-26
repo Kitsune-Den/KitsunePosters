@@ -220,6 +220,14 @@ namespace KitsunePosters
         /// </summary>
         public static string Normalize(string _url)
         {
+            // Fragments are client-side only; UnityWebRequest is known to
+            // mangle them into the request path, which got imgur's 404 shell
+            // instead of the gallery page. Strip before anything else.
+            int hash = _url.IndexOf('#');
+            if (hash >= 0)
+            {
+                _url = _url.Substring(0, hash);
+            }
             try
             {
                 var uri = new System.Uri(_url);

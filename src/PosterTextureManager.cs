@@ -24,6 +24,12 @@ namespace KitsunePosters
         private static readonly Dictionary<string, List<Action<Texture2D>>> pending = new Dictionary<string, List<Action<Texture2D>>>();
         private static readonly HashSet<string> failed = new HashSet<string>();
 
+        /// <summary>Forget this session's failed URLs so they get another try.</summary>
+        public static void ClearFailures()
+        {
+            failed.Clear();
+        }
+
         public static void Get(string _url, Action<Texture2D> _callback)
         {
             if (cache.TryGetValue(_url, out var tex))

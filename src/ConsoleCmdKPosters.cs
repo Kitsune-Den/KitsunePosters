@@ -32,6 +32,7 @@ namespace KitsunePosters
                     return;
                 case "reload":
                     PosterSettings.Reload();
+                    PosterTextureManager.ClearFailures(); // failed URLs get another try
                     PosterRegistry.Reapply();
                     Out($"Settings reloaded. AllowedDomains: {string.Join(", ", PosterSettings.AllowedDomains)}");
                     return;
