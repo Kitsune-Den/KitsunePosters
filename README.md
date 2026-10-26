@@ -8,7 +8,18 @@ The poster block is a sign under the hood (`TEFeatureSignable`), so the URL ride
 
 - Session + disk cache (`<user game data>/KitsunePosters/`), keyed by URL hash. Each image downloads once per machine, ever.
 - Caps: 5 MB per image, 4096px max dimension, 15 s timeout, PNG/JPG only. Failures show the sign text again so the URL can be fixed, and the URL is not retried that session.
-- Dedicated servers skip all of it (no renderer there); the server just syncs sign text like always.
+- Dedicated servers skip the rendering (no renderer there); the server syncs sign text like always and enforces the allowlist.
+
+## Settings and commands
+
+`Settings.xml` in the mod folder:
+
+- `AllowedDomains`: comma-separated hosts posters may load from; `*` (the default) allows everything. An entry matches the host and its subdomains (`imgur.com` also allows `i.imgur.com`, but not `fakeimgur.com` or `imgur.com.evil.net`). The server's copy is authoritative: a disallowed URL is rewritten to `[blocked: <host>]` in the sign text itself before it ever syncs, and clients independently refuse to render URLs their own copy disallows (second gate, since the SetText patch rides a virtual method).
+- `ShowRemoteImages`: per-machine default for whether poster images render at all.
+
+Console command `kposters` (any client or the server):
+
+- `kposters` shows the current settings, `kposters on|off` toggles images on this machine (saved, applies to loaded posters at once), `kposters reload` re-reads Settings.xml, `kposters allow <url>` tests the allowlist.
 
 ## Install
 
@@ -22,7 +33,9 @@ DLL mod: EAC off, and the mod goes on the server **and every client**. Clients w
   - Shader pick (watch the log for `Using shader '...'`).
   - Sign edit window accepts a full CDN URL (text length cap).
   - Reload: leave the chunk, come back, poster should re-apply from cache.
-- Planned before release: server-side domain allowlist, client toggle to disable remote images, admin command to wipe a poster, image tiling across adjacent posters sharing one URL.
+  - Allowlist on a real edit: with a restrictive server Settings.xml, paste a disallowed URL into a poster and check the sign text turns into `[blocked: <host>]` (proves the SetText prefix fires on the server; the log line says so too).
+- Verified on a live dedi via telnet: Settings.xml parsing, `kposters` status/reload/help, and allowlist matching (subdomains pass, lookalikes, suffix spoofs and raw IPs blocked).
+- Planned before release: admin command to wipe a poster, image tiling across adjacent posters sharing one URL, frameless custom model.
 
 ## Build
 
