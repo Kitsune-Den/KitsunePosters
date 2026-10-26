@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5430871035335389395}
   - component: {fileID: 4976486494608860433}
   - component: {fileID: 1582005699013171848}
-  m_Layer: 0
+  m_Layer: 30
   m_Name: TextFace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 2278817526620371282}
   - component: {fileID: 1967144555611086376}
   - component: {fileID: 7752638322759417331}
-  m_Layer: 0
+  m_Layer: 30
   m_Name: Board
   m_TagString: T_Mesh
   m_Icon: {fileID: 0}
@@ -211,7 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2829878882831610994}
-  m_Layer: 0
+  m_Layer: 30
   m_Name: poster_2x2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

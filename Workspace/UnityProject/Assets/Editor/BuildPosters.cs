@@ -72,6 +72,15 @@ public static class BuildPosters
         tm.color = new Color(0.12f, 0.1f, 0.08f);
         textGo.GetComponent<MeshRenderer>().sharedMaterial = tm.font.material;
 
+        // The game's interaction/hit rays use layer mask 0x40010000: chunk
+        // meshes are layer 16, model-entity prefabs layer 30. Bundles store
+        // layers as raw indexes, so bake 30 in or E/hits pass straight through
+        // (found in playtest: no "press E", no tooltip).
+        foreach (var t in root.GetComponentsInChildren<Transform>(true))
+        {
+            t.gameObject.layer = 30;
+        }
+
         PrefabUtility.SaveAsPrefabAsset(root, $"{Dir}/{name}.prefab");
         Object.DestroyImmediate(root);
         Debug.Log($"[posters] prefab {name}: {w}x{h}");
