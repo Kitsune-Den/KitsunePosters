@@ -240,6 +240,40 @@ namespace KitsunePosters
                         return "https://i.imgur.com/" + path + ".png";
                     }
                 }
+
+                // Giphy: pages advertise WebP and files are GIF, neither of
+                // which Unity decodes. Giphy's CDN serves a JPG still for
+                // every id, so all giphy link shapes rewrite to that. A
+                // poster shows the first frame; animation is a later feature.
+                if (host == "giphy.com" || host == "www.giphy.com")
+                {
+                    var parts = uri.AbsolutePath.Trim('/').Split('/');
+                    if (parts.Length >= 2 && parts[0] == "gifs")
+                    {
+                        string slug = parts[parts.Length - 1];
+                        int dash = slug.LastIndexOf('-');
+                        string id = dash >= 0 ? slug.Substring(dash + 1) : slug;
+                        if (id.Length > 0)
+                        {
+                            return "https://i.giphy.com/media/" + id + "/480w_s.jpg";
+                        }
+                    }
+                }
+                else if (host.EndsWith(".giphy.com"))
+                {
+                    var parts = uri.AbsolutePath.Trim('/').Split('/');
+                    int media = System.Array.IndexOf(parts, "media");
+                    if (media >= 0 && parts.Length >= media + 3)
+                    {
+                        // .../media/(version junk/)*<id>/<file>
+                        return "https://i.giphy.com/media/" + parts[parts.Length - 2] + "/480w_s.jpg";
+                    }
+                    if (parts.Length == 1 && parts[0].Contains("."))
+                    {
+                        // i.giphy.com/<id>.gif
+                        return "https://i.giphy.com/media/" + parts[0].Substring(0, parts[0].IndexOf('.')) + "/480w_s.jpg";
+                    }
+                }
             }
             catch { }
             return _url;
