@@ -33,8 +33,10 @@ public static class BuildPosters
         Directory.CreateDirectory(Dir);
         AssetDatabase.Refresh();
 
+        // Dark mat: with the default fill mode the image covers it anyway, and
+        // in fit mode the margins read as a frame mat, not a lightbox.
         var board = new Material(Shader.Find("Standard")) { name = "PosterBoard" };
-        board.color = new Color(0.91f, 0.88f, 0.82f); // raw canvas
+        board.color = new Color(0.16f, 0.15f, 0.14f);
         board.SetFloat("_Glossiness", 0.08f);
         AssetDatabase.CreateAsset(board, Dir + "/PosterBoard.mat");
 
@@ -78,7 +80,7 @@ public static class BuildPosters
         tm.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
-        tm.color = new Color(0.12f, 0.1f, 0.08f);
+        tm.color = new Color(0.88f, 0.85f, 0.8f); // light on the dark board
         textGo.GetComponent<MeshRenderer>().sharedMaterial = tm.font.material;
 
         PrefabUtility.SaveAsPrefabAsset(root, $"{Dir}/{name}.prefab");

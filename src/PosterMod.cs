@@ -113,6 +113,7 @@ namespace KitsunePosters
             faceW -= 0.08f;
             faceH -= 0.08f;
 
+            var mode = PosterUrl.ExtractMode(__instance.signText?.Text);
             PosterTextureManager.Get(url, tex =>
             {
                 if (tex == null)
@@ -122,7 +123,7 @@ namespace KitsunePosters
                     PosterSurface.ShowText(meshes);
                     return;
                 }
-                PosterSurface.Apply(meshes, tex, faceW, faceH, layout);
+                PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode);
             });
             NudgeOthers(world, pos, layout);
         }
@@ -165,8 +166,34 @@ namespace KitsunePosters
         }
     }
 
+    public enum PosterFit
+    {
+        Fill,    // cover the board, crop the overflow (the default)
+        Fit,     // whole image visible, board shows round it
+        Stretch, // cover the board, ignore aspect
+    }
+
     public static class PosterUrl
     {
+        /// <summary>A bare keyword next to the URL picks the fit mode.</summary>
+        public static PosterFit ExtractMode(string _text)
+        {
+            if (string.IsNullOrEmpty(_text))
+            {
+                return PosterFit.Fill;
+            }
+            foreach (var token in _text.Split(' ', '\n', '\r', '\t'))
+            {
+                switch (token.Trim().ToLowerInvariant())
+                {
+                    case "fit": return PosterFit.Fit;
+                    case "stretch": return PosterFit.Stretch;
+                    case "fill": return PosterFit.Fill;
+                }
+            }
+            return PosterFit.Fill;
+        }
+
         /// <summary>First http(s) token in the sign text, or null.</summary>
         public static string Extract(string _text)
         {

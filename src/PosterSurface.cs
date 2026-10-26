@@ -24,7 +24,7 @@ namespace KitsunePosters
 
         private static Vector2[] baseUv;
 
-        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout)
+        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode)
         {
             float w, h;
             if (_layout.Tiled)
@@ -32,9 +32,9 @@ namespace KitsunePosters
                 w = TiledCellSize;
                 h = TiledCellSize;
             }
-            else
+            else if (_mode == PosterFit.Fit)
             {
-                // Fit the image into the board's face, aspect kept.
+                // Whole image visible, board showing round it.
                 w = _faceW;
                 h = _faceW * ((float)_tex.height / _tex.width);
                 if (h > _faceH)
@@ -43,11 +43,36 @@ namespace KitsunePosters
                     h = _faceH;
                 }
             }
+            else
+            {
+                w = _faceW;
+                h = _faceH;
+            }
 
-            float uSize = 1f / _layout.Cols;
-            float vSize = 1f / _layout.Rows;
-            float u0 = _layout.Col * uSize;
-            float v0 = _layout.Row * vSize;
+            // Fill crops the image to the face's aspect (centre crop); a tiled
+            // group crops to the whole group's aspect unless stretching.
+            var crop = new Rect(0f, 0f, 1f, 1f);
+            bool cover = _mode == PosterFit.Fill || (_layout.Tiled && _mode != PosterFit.Stretch);
+            if (cover)
+            {
+                float faceAspect = _layout.Tiled ? (float)_layout.Cols / _layout.Rows : _faceW / _faceH;
+                float imageAspect = (float)_tex.width / _tex.height;
+                if (imageAspect > faceAspect)
+                {
+                    float f = faceAspect / imageAspect;
+                    crop = new Rect((1f - f) / 2f, 0f, f, 1f);
+                }
+                else if (imageAspect < faceAspect)
+                {
+                    float f = imageAspect / faceAspect;
+                    crop = new Rect(0f, (1f - f) / 2f, 1f, f);
+                }
+            }
+
+            float uSize = crop.width / _layout.Cols;
+            float vSize = crop.height / _layout.Rows;
+            float u0 = crop.x + _layout.Col * uSize;
+            float v0 = crop.y + _layout.Row * vSize;
 
             foreach (var mesh in _meshes)
             {
