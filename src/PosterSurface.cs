@@ -24,7 +24,7 @@ namespace KitsunePosters
 
         private static Vector2[] baseUv;
 
-        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode)
+        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode, bool _hideBoard = false)
         {
             float w, h;
             if (_layout.Tiled)
@@ -81,6 +81,12 @@ namespace KitsunePosters
                     continue; // destroyed with its chunk while we downloaded
                 }
                 SetTextVisible(mesh, false);
+                if (_hideBoard)
+                {
+                    // Graffiti: the backing board disappears and the image sits
+                    // on the wall as a decal (its PNG transparency preserved).
+                    SetBoardVisible(mesh.transform, false);
+                }
                 var quad = FindOrCreateQuad(mesh.transform);
                 quad.transform.localScale = new Vector3(w, h, 1f);
                 SetQuadUv(quad, u0, v0, uSize, vSize);
@@ -134,11 +140,22 @@ namespace KitsunePosters
                     continue;
                 }
                 SetTextVisible(mesh, true);
+                SetBoardVisible(mesh.transform, true); // graffiti ghost board comes back
                 var old = mesh.transform.Find(QuadName);
                 if (old != null)
                 {
                     Object.Destroy(old.gameObject);
                 }
+            }
+        }
+
+        private static void SetBoardVisible(Transform _anchor, bool _visible)
+        {
+            var board = _anchor.parent != null ? _anchor.parent.Find("Board") : null;
+            var renderer = board != null ? board.GetComponent<MeshRenderer>() : null;
+            if (renderer != null)
+            {
+                renderer.enabled = _visible;
             }
         }
 

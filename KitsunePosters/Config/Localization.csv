@@ -4,3 +4,5 @@ kitsunePoster2x2,blocks,Block,,,Kitsune Poster (2x2)
 kitsunePoster3x2,blocks,Block,,,Kitsune Poster (3x2)
 kposters,blocks,Block,,,Poster settings
 kitsunePoster1x1Desc,blocks,Block,,,"A frameless poster that shows any image from the internet. Place it, press E, paste an image link (PNG or JPG, up to 5 MB) and the poster loads it. The image fills the board; add the word fit or stretch after the link to change that. Clear the text to get a blank board back. Identical 1x1 posters with the same link tile into one big image."
+kitsuneGraffiti1x1,blocks,Block,,,Kitsune Graffiti (1x1)
+kitsuneGraffiti1x1Desc,blocks,Block,,,"Spray art straight on the wall: shows an image from a link with its transparency kept, no board behind it. Place it on a wall, press E, paste a link to a transparent PNG. The faint ghost panel disappears once the image loads. Identical graffiti blocks with the same link tile into one big piece."

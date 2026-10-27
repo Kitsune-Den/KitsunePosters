@@ -42,6 +42,8 @@ DLL mod: EAC off, and the mod goes on the server **and every client**. Clients w
 
 Three frameless poster boards from the mod's own bundle, craftable from wood + paper: `kitsunePoster1x1`, `kitsunePoster2x2` and `kitsunePoster3x2` (multi-block, one tile entity, no seams). The image fills the board's face. Tiling across neighbours is for the 1x1 only; bigger walls, use the bigger posters.
 
+`kitsuneGraffiti1x1` (paper + glue) is the decal variant: its board is a faint transparent ghost, and once an image loads the DLL hides the board entirely and keeps the image's PNG transparency, so the art sits straight on the wall like spray paint. The ghost's Fade-mode Standard material is what the image quad clones (color reset to white), so the one material drives both looks. Graffiti tiles with graffiti (same block type), never with posters.
+
 ## Model pipeline (HouseCat-style)
 
 `Workspace/UnityProject` is a Unity 2022.3.62f3 project whose editor script builds everything procedurally - thin board (scaled cube, flush against the block volume's +Z face, front facing -Z), TextMesh child for `TEFeatureSignable`, `T_Mesh` tag on the collider object (the project's TagManager defines the 7D2D tag order: Item, T_Mesh, B_Mesh, T_Mesh_B, T_Block, because bundles store tags as indexes):
@@ -58,7 +60,17 @@ Confirmed in game (2026-10-26 playtest): board renders frameless and faces the p
 
 Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
 
+Found and fixed after the first settings-window playtest: the window's XML
+controller attribute lacked the namespace (`controller="KitsunePosters.KitsunePosterSettings, KitsunePosters"`
+is the required form; the game inserts `XUiC_` after the last dot and resolves
+via `Type.GetType`). Without it the game logs ONE error at XUi parse time and
+silently runs the window on a base controller: it opens and draws, but every
+button is dead. Every button press now also logs a `[KitsunePosters]` line, so
+a dead window is diagnosable from the log alone.
+
 Still to see in game before release:
+- The settings window's buttons (toggle, add/remove, allow all, close) after the controller fix.
+- Graffiti block: ghost board, decal transparency, board hiding once the image loads.
 - 2x2 / 3x2 boards (render, hit/pickup, one image, no seams).
 - Tiling wall of 1x1s: image spread, direction per facing (fix = the UDir table in `PosterTiling.cs`), seams.
 - `kposters off/on` live re-render; chunk reload re-applying from cache.

@@ -40,22 +40,43 @@ public static class BuildPosters
         board.SetFloat("_Glossiness", 0.08f);
         AssetDatabase.CreateAsset(board, Dir + "/PosterBoard.mat");
 
+        // Ghost mat for graffiti: Standard in Fade mode, faint, so the empty
+        // block can be found. PosterSurface clones the Board's material for the
+        // image quad (color reset to white), so the SAME Fade material is what
+        // keeps the sprayed PNG's transparency - don't change one without the
+        // other. Fade keywords must be baked here or the bundle strips them.
+        var ghost = new Material(Shader.Find("Standard")) { name = "GraffitiGhost" };
+        ghost.SetFloat("_Mode", 2f); // Fade
+        ghost.SetOverrideTag("RenderType", "Transparent");
+        ghost.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        ghost.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        ghost.SetInt("_ZWrite", 0);
+        ghost.DisableKeyword("_ALPHATEST_ON");
+        ghost.EnableKeyword("_ALPHABLEND_ON");
+        ghost.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        ghost.renderQueue = 3000;
+        ghost.color = new Color(0.55f, 0.75f, 0.85f, 0.18f);
+        ghost.SetFloat("_Glossiness", 0f);
+        AssetDatabase.CreateAsset(ghost, Dir + "/GraffitiGhost.mat");
+
         foreach (var (name, w, h) in Sizes)
         {
-            MakePrefab(name, w, h, board);
+            MakePrefab(name, w, h, board, Thickness);
         }
+        // Graffiti: a near-flat ghost pane; the DLL hides it once an image shows.
+        MakePrefab("graffiti_1x1", 1, 1, ghost, 0.02f);
         WriteBundle();
     }
 
-    private static void MakePrefab(string name, int w, int h, Material mat)
+    private static void MakePrefab(string name, int w, int h, Material mat, float thickness)
     {
         var root = new GameObject(name);
 
         var board = GameObject.CreatePrimitive(PrimitiveType.Cube);
         board.name = "Board";
         board.transform.SetParent(root.transform, false);
-        board.transform.localPosition = new Vector3(0f, 0f, BoardSide * (0.5f - Thickness / 2f));
-        board.transform.localScale = new Vector3(w - 0.02f, h - 0.02f, Thickness);
+        board.transform.localPosition = new Vector3(0f, 0f, BoardSide * (0.5f - thickness / 2f));
+        board.transform.localScale = new Vector3(w - 0.02f, h - 0.02f, thickness);
         var renderer = board.GetComponent<MeshRenderer>();
         renderer.sharedMaterial = mat;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -65,17 +86,20 @@ public static class BuildPosters
         // model collider as part of a block when the collider's OWN transform is
         // tagged T_Block (T_Mesh is the chunk-mesh tag and does nothing here).
         // One box on the root, tagged, Default layer - the proven pattern.
+        // The collider stays a hand's width thick even on near-flat graffiti,
+        // or the block could not be aimed at.
         root.tag = "T_Block";
         var box = root.AddComponent<BoxCollider>();
-        box.center = new Vector3(0f, 0f, BoardSide * (0.5f - Thickness / 2f));
-        box.size = new Vector3(w - 0.02f, h - 0.02f, Thickness);
+        float grip = Mathf.Max(thickness, 0.06f);
+        box.center = new Vector3(0f, 0f, BoardSide * (0.5f - grip / 2f));
+        box.size = new Vector3(w - 0.02f, h - 0.02f, grip);
 
         // TEFeatureSignable finds this TextMesh and drives it; our DLL parents
         // the image quad to it. TextMesh reads correctly from its -Z side,
         // which is the board's front.
         var textGo = new GameObject("TextFace");
         textGo.transform.SetParent(root.transform, false);
-        textGo.transform.localPosition = new Vector3(0f, 0f, BoardSide * (0.5f - Thickness) - 0.005f);
+        textGo.transform.localPosition = new Vector3(0f, 0f, BoardSide * (0.5f - thickness) - 0.005f);
         var tm = textGo.AddComponent<TextMesh>();
         tm.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         tm.anchor = TextAnchor.MiddleCenter;
@@ -92,11 +116,12 @@ public static class BuildPosters
     {
         var outDir = Path.GetFullPath("../../KitsunePosters/Resources");
         Directory.CreateDirectory(outDir);
-        var names = new string[Sizes.Length];
+        var names = new string[Sizes.Length + 1];
         for (int i = 0; i < Sizes.Length; i++)
         {
             names[i] = $"{Dir}/{Sizes[i].name}.prefab";
         }
+        names[Sizes.Length] = $"{Dir}/graffiti_1x1.prefab";
         var build = new AssetBundleBuild { assetBundleName = BundleName, assetNames = names };
         var tmp = Path.GetFullPath("Temp/bundles");
         Directory.CreateDirectory(tmp);

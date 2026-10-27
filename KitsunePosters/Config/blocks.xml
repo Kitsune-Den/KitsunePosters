@@ -62,5 +62,16 @@
 			<property name="SortOrder2" value="0002"/>
 		</block>
 
+		<!-- Graffiti decal: a near-invisible frame that shows the image ALONE,
+		     with its PNG transparency kept - spray art straight on the wall.
+		     While empty it shows a faint ghost board so it can be found. -->
+		<block name="kitsuneGraffiti1x1">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_1x1"/>
+			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
+			<property name="SortOrder2" value="0003"/>
+		</block>
+
 	</append>
 </configs>

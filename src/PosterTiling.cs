@@ -170,8 +170,7 @@ namespace KitsunePosters
 
         public static bool IsPosterBlock(BlockValue _bv)
         {
-            string name = _bv.Block?.GetBlockName();
-            return name != null && name.StartsWith("kitsunePoster");
+            return PosterBlocks.IsPoster(_bv.Block?.GetBlockName());
         }
 
         public static TEFeatureSignable SignableAt(World _world, Vector3i _pos)

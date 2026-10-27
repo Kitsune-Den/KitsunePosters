@@ -17,6 +17,7 @@ namespace KitsunePosters
         private XUiV_Label status;
         private XUiV_Label hint;
         private XUiV_Label toggleLabel;
+        private XUiV_Label toggleState;
         private readonly XUiV_Label[] rows = new XUiV_Label[RowCount];
         private readonly string[] shown = new string[RowCount];
 
@@ -27,18 +28,34 @@ namespace KitsunePosters
             status = (XUiV_Label)GetChildById("status").ViewComponent;
             hint = (XUiV_Label)GetChildById("hint").ViewComponent;
             toggleLabel = (XUiV_Label)GetChildById("toggleLabel").ViewComponent;
+            toggleState = (XUiV_Label)GetChildById("toggleState").ViewComponent;
 
-            GetChildById("btnToggle").OnPress += (_s, _b) => ToggleImages();
-            GetChildById("btnAdd").OnPress += (_s, _b) => AddSite();
-            GetChildById("btnAllowAll").OnPress += (_s, _b) => PosterNet.Send(NetPackageKitsunePosters.Op.AllowAll, "");
-            GetChildById("btnCloseSettings").OnPress += (_s, _b) => xui.playerUI.windowManager.Close(GroupName);
+            Wire("btnToggle", ToggleImages);
+            Wire("btnAdd", AddSite);
+            Wire("btnAllowAll", () => PosterNet.Send(NetPackageKitsunePosters.Op.AllowAll, ""));
+            Wire("btnCloseSettings", () => xui.playerUI.windowManager.Close(GroupName));
             for (int i = 0; i < RowCount; i++)
             {
                 int row = i; // captured
                 rows[i] = (XUiV_Label)GetChildById("row" + i).ViewComponent;
-                GetChildById("btnRemove" + i).OnPress += (_s, _b) => RemoveRow(row);
+                Wire("btnRemove" + i, () => RemoveRow(row));
             }
             PosterNet.Changed += Refresh;
+        }
+
+        private void Wire(string _id, System.Action _onPress)
+        {
+            var child = GetChildById(_id);
+            if (child == null)
+            {
+                Log.Warning($"[KitsunePosters] Settings window: no '{_id}' in the XML; its button does nothing.");
+                return;
+            }
+            child.OnPress += (_s, _b) =>
+            {
+                Log.Out($"[KitsunePosters] Settings window: {_id} pressed.");
+                _onPress();
+            };
         }
 
         public override void OnOpen()
@@ -80,9 +97,8 @@ namespace KitsunePosters
 
         private void Refresh()
         {
-            toggleLabel.Text = PosterSettings.ShowRemoteImages
-                ? "Poster images on this PC: ON"
-                : "Poster images on this PC: OFF";
+            toggleLabel.Text = "Show poster images on this PC";
+            toggleState.Text = PosterSettings.ShowRemoteImages ? "[00E676]ON[-]" : "[FF5252]OFF[-]";
 
             string csv = PosterNet.CurrentCsv;
             var domains = new List<string>();
@@ -144,7 +160,20 @@ namespace KitsunePosters
         public static void Open()
         {
             var ui = LocalPlayerUI.GetUIForPrimaryPlayer();
-            if (ui != null && !ui.windowManager.IsWindowOpen(GroupName))
+            if (ui == null)
+            {
+                return;
+            }
+            if (ui.windowManager.GetWindow(GroupName) == null)
+            {
+                // Happens when a server pushes XUi configs from an older copy
+                // of the mod: the client code is current but the window's XML
+                // never arrived.
+                Log.Warning("[KitsunePosters] Settings window XML not loaded (older mod copy on the server?). Falling back to the console: kposters / kpadmin domains.");
+                GameManager.ShowTooltip(ui.entityPlayer, "Poster settings window missing; use the console: kposters", string.Empty, "ui_denied");
+                return;
+            }
+            if (!ui.windowManager.IsWindowOpen(GroupName))
             {
                 ui.windowManager.Open(GroupName, _bModal: true);
             }

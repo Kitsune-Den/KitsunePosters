@@ -50,13 +50,31 @@ namespace KitsunePosters
         }
     }
 
+    /// <summary>Which blocks this mod drives, by block name.</summary>
+    public static class PosterBlocks
+    {
+        /// <summary>Any of ours: solid poster boards and graffiti decals.</summary>
+        public static bool IsPoster(string _blockName)
+        {
+            return _blockName != null
+                && (_blockName.StartsWith("kitsunePoster") || _blockName.StartsWith("kitsuneGraffiti"));
+        }
+
+        /// <summary>Graffiti: the board hides once an image shows, and the
+        /// image keeps its PNG transparency (decal on the wall).</summary>
+        public static bool IsGraffiti(string _blockName)
+        {
+            return _blockName != null && _blockName.StartsWith("kitsuneGraffiti");
+        }
+    }
+
     /// <summary>Adds "Poster settings" to a poster's E menu and opens the window on it.</summary>
     public static class SignCommandsPatch
     {
         public static void InitPostfix(TEFeatureSignable __instance, Action<BlockActivationCommand, TileEntityComposite.EBlockCommandOrder, TileEntityFeatureData> _addCallback)
         {
             string blockName = __instance.Parent?.TeData?.Block?.GetBlockName();
-            if (blockName != null && blockName.StartsWith("kitsunePoster"))
+            if (PosterBlocks.IsPoster(blockName))
             {
                 _addCallback(new BlockActivationCommand("kposters", "wrench", _enabled: true),
                     TileEntityComposite.EBlockCommandOrder.Normal, __instance.FeatureData);
@@ -85,7 +103,7 @@ namespace KitsunePosters
                 return;
             }
             string blockName = __instance.Parent?.TeData?.Block?.GetBlockName();
-            if (blockName == null || !blockName.StartsWith("kitsunePoster"))
+            if (!PosterBlocks.IsPoster(blockName))
             {
                 return;
             }
@@ -118,11 +136,12 @@ namespace KitsunePosters
 
             // Only our poster blocks react to URLs; ordinary signs are untouched.
             string blockName = __instance.Parent?.TeData?.Block?.GetBlockName();
-            if (blockName == null || !blockName.StartsWith("kitsunePoster"))
+            if (!PosterBlocks.IsPoster(blockName))
             {
                 return;
             }
             PosterRegistry.Track(__instance);
+            bool graffiti = PosterBlocks.IsGraffiti(blockName);
 
             var world = GameManager.Instance.World;
             Vector3i pos = __instance.Parent.ToWorldPos();
@@ -161,7 +180,7 @@ namespace KitsunePosters
                     PosterSurface.ShowText(meshes);
                     return;
                 }
-                PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode);
+                PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode, graffiti);
             });
             NudgeOthers(world, pos, layout);
         }

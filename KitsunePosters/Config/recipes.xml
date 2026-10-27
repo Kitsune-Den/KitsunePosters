@@ -12,5 +12,9 @@
 			<ingredient name="resourceWood" count="24"/>
 			<ingredient name="resourcePaper" count="16"/>
 		</recipe>
+		<recipe name="kitsuneGraffiti1x1" count="1" craft_time="5">
+			<ingredient name="resourcePaper" count="4"/>
+			<ingredient name="resourceGlue" count="1"/>
+		</recipe>
 	</append>
 </configs>
