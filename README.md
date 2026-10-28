@@ -54,7 +54,7 @@ The graffiti blocks (paper + glue) are the decal variant, in the same three size
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: release candidate
+## Status: released (1.0.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 
@@ -68,14 +68,9 @@ silently runs the window on a base controller: it opens and draws, but every
 button is dead. Every button press now also logs a `[KitsunePosters]` line, so
 a dead window is diagnosable from the log alone.
 
-Confirmed in game (2026-10-28, Kitsune Cat Test server): graffiti ghost board, decal transparency and board hiding all work; the bundled Fade material survived the build. Dark art reads lighter in daylight because the decal is lit like the world (by design; it goes properly dark at night).
+Confirmed in game (2026-10-28, Kitsune Cat Test server): the settings window's buttons work after the controller fix (presses log, the toggle persists to prefs); graffiti works in all three sizes - ghost pane while empty, one seamless image per multiblock, PNG transparency kept, board hidden; a 4000px imgur direct link loads within the caps. Dark art reads lighter in daylight because the decal is lit like the world (by design; it goes properly dark at night).
 
-Still to see in game before release:
-- The settings window's buttons (toggle, add/remove, allow all, close) after the controller fix.
-- 2x2 / 3x2 boards and graffiti (render, hit/pickup, one image, no seams).
-- Tiling wall of 1x1s: image spread, direction per facing (fix = the UDir table in `PosterTiling.cs`), seams.
-- `kposters off/on` live re-render; chunk reload re-applying from cache.
-- Allowlist block on a real multiplayer edit (dedi-verified already; belt and braces).
+Not yet exercised on a client (logic dedi-verified): tiling wall image direction per facing (fix = the UDir table in `PosterTiling.cs`), `kposters off/on` live re-render, chunk reload re-applying from cache.
 
 Verified on a live dedi via telnet: Settings.xml parsing, `kposters` and `kpadmin`, allowlist matching (subdomains pass; lookalikes, suffix spoofs and raw IPs blocked), the SetText prefix firing on a real server (disallowed URL rewritten to `[blocked: <host>]`), group detection with correct cells (incl. that multi-block posters don't try to tile), L-shape fallback, radius wipe, and all three blocks + the bundle parsing and placing clean.
 
