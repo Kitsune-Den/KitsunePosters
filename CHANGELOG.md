@@ -10,6 +10,6 @@ First release.
 - Fit modes: the image fills the board by default (centre crop); add the word "fit" or "stretch" after the link to change that.
 - Tiling: identical 1x1 posters with the same link, forming a complete rectangle, show one image spread seamlessly across the wall.
 - Safety: optional server-side domain allowlist (blocked URLs are rewritten in the sign text itself), per-machine "kposters off" toggle, 5 MB / 4096px / 15 s caps, session and disk caching, admin "kpadmin wipe" with radius.
-- Graffiti block: a near-invisible 1x1 decal that shows a transparent PNG straight on the wall, no board behind it. A faint ghost panel marks the empty block and disappears once the image loads. Tiles into murals like the posters do.
+- Graffiti blocks (1x1, 2x2, 3x2): near-invisible decals that show a transparent PNG straight on the wall, no board behind it. A faint ghost panel marks the empty block and disappears once the image loads. The 1x1 tiles into murals like the posters do.
 - A clickable settings window on every poster's E menu: the image toggle for everyone, the allowlist with add/remove buttons for admins, working for remote admins over a small sync package.
 - Raises the sign edit window's input cap from 50 to 300 characters (all signs), since image URLs need the room.

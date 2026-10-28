@@ -28,6 +28,13 @@ public static class BuildPosters
         ("poster_3x2", 3, 2),
     };
 
+    private static readonly (string name, int w, int h)[] GraffitiSizes =
+    {
+        ("graffiti_1x1", 1, 1),
+        ("graffiti_2x2", 2, 2),
+        ("graffiti_3x2", 3, 2),
+    };
+
     public static void Build()
     {
         Directory.CreateDirectory(Dir);
@@ -63,8 +70,11 @@ public static class BuildPosters
         {
             MakePrefab(name, w, h, board, Thickness);
         }
-        // Graffiti: a near-flat ghost pane; the DLL hides it once an image shows.
-        MakePrefab("graffiti_1x1", 1, 1, ghost, 0.02f);
+        // Graffiti: near-flat ghost panes; the DLL hides them once an image shows.
+        foreach (var (name, w, h) in GraffitiSizes)
+        {
+            MakePrefab(name, w, h, ghost, 0.02f);
+        }
         WriteBundle();
     }
 
@@ -116,13 +126,16 @@ public static class BuildPosters
     {
         var outDir = Path.GetFullPath("../../KitsunePosters/Resources");
         Directory.CreateDirectory(outDir);
-        var names = new string[Sizes.Length + 1];
-        for (int i = 0; i < Sizes.Length; i++)
+        var names = new System.Collections.Generic.List<string>();
+        foreach (var (name, _, _) in Sizes)
         {
-            names[i] = $"{Dir}/{Sizes[i].name}.prefab";
+            names.Add($"{Dir}/{name}.prefab");
         }
-        names[Sizes.Length] = $"{Dir}/graffiti_1x1.prefab";
-        var build = new AssetBundleBuild { assetBundleName = BundleName, assetNames = names };
+        foreach (var (name, _, _) in GraffitiSizes)
+        {
+            names.Add($"{Dir}/{name}.prefab");
+        }
+        var build = new AssetBundleBuild { assetBundleName = BundleName, assetNames = names.ToArray() };
         var tmp = Path.GetFullPath("Temp/bundles");
         Directory.CreateDirectory(tmp);
         BuildPipeline.BuildAssetBundles(tmp, new[] { build }, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.StandaloneWindows64);

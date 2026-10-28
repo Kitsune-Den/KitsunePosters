@@ -73,5 +73,43 @@
 			<property name="SortOrder2" value="0003"/>
 		</block>
 
+		<block name="kitsuneGraffiti2x2">
+			<property name="Extends" value="kitsuneGraffiti1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="260"/>
+					<property name="LineCount" value="4"/>
+					<property name="LineWidth" value="1.8"/>
+					<property name="LineSpacing" value="1"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_2x2"/>
+			<property name="MultiBlockDim" value="2,2,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
+			<property name="SortOrder2" value="0004"/>
+		</block>
+
+		<block name="kitsuneGraffiti3x2">
+			<property name="Extends" value="kitsuneGraffiti1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="380"/>
+					<property name="LineCount" value="4"/>
+					<property name="LineWidth" value="2.8"/>
+					<property name="LineSpacing" value="1"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_3x2"/>
+			<property name="MultiBlockDim" value="3,2,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
+			<property name="SortOrder2" value="0005"/>
+		</block>
+
 	</append>
 </configs>

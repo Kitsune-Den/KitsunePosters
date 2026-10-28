@@ -42,7 +42,7 @@ DLL mod: EAC off, and the mod goes on the server **and every client**. Clients w
 
 Three frameless poster boards from the mod's own bundle, craftable from wood + paper: `kitsunePoster1x1`, `kitsunePoster2x2` and `kitsunePoster3x2` (multi-block, one tile entity, no seams). The image fills the board's face. Tiling across neighbours is for the 1x1 only; bigger walls, use the bigger posters.
 
-`kitsuneGraffiti1x1` (paper + glue) is the decal variant: its board is a faint transparent ghost, and once an image loads the DLL hides the board entirely and keeps the image's PNG transparency, so the art sits straight on the wall like spray paint. The ghost's Fade-mode Standard material is what the image quad clones (color reset to white), so the one material drives both looks. Graffiti tiles with graffiti (same block type), never with posters.
+The graffiti blocks (paper + glue) are the decal variant, in the same three sizes: `kitsuneGraffiti1x1`, `kitsuneGraffiti2x2` and `kitsuneGraffiti3x2`. Their board is a faint transparent ghost, and once an image loads the DLL hides the board entirely and keeps the image's PNG transparency, so the art sits straight on the wall like spray paint. The ghost's Fade-mode Standard material is what the image quad clones (color reset to white), so the one material drives both looks. Graffiti tiles with graffiti (same block type, 1x1 only), never with posters.
 
 ## Model pipeline (HouseCat-style)
 
@@ -68,10 +68,11 @@ silently runs the window on a base controller: it opens and draws, but every
 button is dead. Every button press now also logs a `[KitsunePosters]` line, so
 a dead window is diagnosable from the log alone.
 
+Confirmed in game (2026-10-28, Kitsune Cat Test server): graffiti ghost board, decal transparency and board hiding all work; the bundled Fade material survived the build. Dark art reads lighter in daylight because the decal is lit like the world (by design; it goes properly dark at night).
+
 Still to see in game before release:
 - The settings window's buttons (toggle, add/remove, allow all, close) after the controller fix.
-- Graffiti block: ghost board, decal transparency, board hiding once the image loads.
-- 2x2 / 3x2 boards (render, hit/pickup, one image, no seams).
+- 2x2 / 3x2 boards and graffiti (render, hit/pickup, one image, no seams).
 - Tiling wall of 1x1s: image spread, direction per facing (fix = the UDir table in `PosterTiling.cs`), seams.
 - `kposters off/on` live re-render; chunk reload re-applying from cache.
 - Allowlist block on a real multiplayer edit (dedi-verified already; belt and braces).
