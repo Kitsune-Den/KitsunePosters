@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2026-10-28)
+
+- Fixed sign text (URLs and plain sign messages on poster and graffiti blocks) drawing on top of everything and showing through walls. Text now respects world geometry like any other object.
+
 ## 1.0.0 (2026-10-28)
 
 First release.
