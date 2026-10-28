@@ -24,6 +24,51 @@ namespace KitsunePosters
 
         private static Vector2[] baseUv;
 
+        // The prefab's text material (KitsunePosters/TextOccluded) ships with
+        // no texture; it needs the LIVE font atlas, not a baked copy, or the
+        // glyph UVs drift when the dynamic atlas rebuilds. Shared material:
+        // one bind covers every poster in the world.
+        private static Material textMaterial;
+        private static Font textFont;
+
+        public static void BindTextMaterial(SmartTextMesh[] _meshes)
+        {
+            foreach (var mesh in _meshes)
+            {
+                if (mesh == null)
+                {
+                    continue;
+                }
+                var tm = mesh.GetComponent<TextMesh>();
+                var renderer = mesh.GetComponent<MeshRenderer>();
+                if (tm == null || renderer == null || tm.font == null)
+                {
+                    continue;
+                }
+                var mat = renderer.sharedMaterial;
+                if (mat == null || mat.shader == null || !mat.shader.name.EndsWith("TextOccluded"))
+                {
+                    continue; // vanilla sign or an older bundle: leave it alone
+                }
+                textMaterial = mat;
+                textFont = tm.font;
+                var atlas = tm.font.material != null ? tm.font.material.mainTexture : null;
+                if (atlas != null && mat.mainTexture != atlas)
+                {
+                    mat.mainTexture = atlas;
+                }
+            }
+        }
+
+        /// <summary>Dynamic font atlases rebuild at runtime; follow them.</summary>
+        public static void OnFontRebuilt(Font _font)
+        {
+            if (textMaterial != null && _font == textFont && _font.material != null)
+            {
+                textMaterial.mainTexture = _font.material.mainTexture;
+            }
+        }
+
         public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode, bool _hideBoard = false)
         {
             float w, h;

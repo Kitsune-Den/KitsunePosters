@@ -66,19 +66,26 @@ public static class BuildPosters
         ghost.SetFloat("_Glossiness", 0f);
         AssetDatabase.CreateAsset(ghost, Dir + "/GraffitiGhost.mat");
 
+        // Sign text material: the built-in font material draws over everything
+        // (ZTest Always), which leaks poster URLs through walls. Our shader is
+        // the same alpha blend with a normal depth test; the DLL rebinds its
+        // _MainTex to the live font atlas at runtime.
+        var text = new Material(Shader.Find("KitsunePosters/TextOccluded")) { name = "PosterText" };
+        AssetDatabase.CreateAsset(text, Dir + "/PosterText.mat");
+
         foreach (var (name, w, h) in Sizes)
         {
-            MakePrefab(name, w, h, board, Thickness);
+            MakePrefab(name, w, h, board, Thickness, text);
         }
         // Graffiti: near-flat ghost panes; the DLL hides them once an image shows.
         foreach (var (name, w, h) in GraffitiSizes)
         {
-            MakePrefab(name, w, h, ghost, 0.02f);
+            MakePrefab(name, w, h, ghost, 0.02f, text);
         }
         WriteBundle();
     }
 
-    private static void MakePrefab(string name, int w, int h, Material mat, float thickness)
+    private static void MakePrefab(string name, int w, int h, Material mat, float thickness, Material textMat)
     {
         var root = new GameObject(name);
 
@@ -115,7 +122,7 @@ public static class BuildPosters
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
         tm.color = new Color(0.88f, 0.85f, 0.8f); // light on the dark board
-        textGo.GetComponent<MeshRenderer>().sharedMaterial = tm.font.material;
+        textGo.GetComponent<MeshRenderer>().sharedMaterial = textMat;
 
         PrefabUtility.SaveAsPrefabAsset(root, $"{Dir}/{name}.prefab");
         Object.DestroyImmediate(root);

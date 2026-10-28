@@ -46,6 +46,10 @@ namespace KitsunePosters
             {
                 Log.Warning("[KitsunePosters] Activation command methods not found - settings window only via 'kposters menu'.");
             }
+            if (!GameManager.IsDedicatedServer)
+            {
+                UnityEngine.Font.textureRebuilt += PosterSurface.OnFontRebuilt;
+            }
             Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, E-menu commands).");
         }
     }
@@ -141,6 +145,7 @@ namespace KitsunePosters
                 return;
             }
             PosterRegistry.Track(__instance);
+            PosterSurface.BindTextMaterial(meshes);
             bool graffiti = PosterBlocks.IsGraffiti(blockName);
 
             var world = GameManager.Instance.World;
