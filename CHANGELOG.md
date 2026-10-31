@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-10-31)
 
 - Posters and graffiti always read right side up on a wall, whichever way they were rotated when placed. Rotating a poster onto a wall used to leave the image upside down (or sideways), and the blank board gave no way to tell beforehand.
 - Posters can be picked up: E > Take returns the block to your inventory. Works anywhere you could place one; locked posters only for players allowed to edit them.
