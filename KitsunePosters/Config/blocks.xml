@@ -15,6 +15,12 @@
 					<property name="LineSpacing" value="1"/>
 				</property>
 				<property class="TEFeatureLockable"/>
+				<!-- E > Take. Extends deep-merges CompositeFeatures, so every
+				     size and the graffiti inherit it. The DLL replaces vanilla's
+				     own-land-claim-only rule with the usual pickup rule. -->
+				<property class="TEFeaturePickup">
+					<property name="TakeDelay" value="1"/>
+				</property>
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>

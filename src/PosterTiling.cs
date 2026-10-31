@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace KitsunePosters
 {
@@ -10,7 +11,7 @@ namespace KitsunePosters
     }
 
     /// <summary>
-    /// Adjacent poster blocks (same block, same rotation, same URL) forming a
+    /// Adjacent poster blocks (same block, same facing, same URL) forming a
     /// complete rectangle show ONE image spread across them. Every member
     /// computes the same group from world state, so no extra sync is needed.
     /// </summary>
@@ -18,18 +19,37 @@ namespace KitsunePosters
     {
         public const int MaxGroupCells = 64;
 
-        // U+ direction per Basic90 rotation, so the image follows the block's
-        // facing. If tiled images come out reversed in game for some facings,
-        // fix the signs HERE (single source of truth).
-        private static readonly Vector3i[] UDir =
-        {
-            new Vector3i(1, 0, 0),
-            new Vector3i(0, 0, 1),
-            new Vector3i(-1, 0, 0),
-            new Vector3i(0, 0, -1),
-        };
-
         public static PosterLayout Single => new PosterLayout { Tiled = false, Cols = 1, Rows = 1, Col = 0, Row = 0 };
+
+        /// <summary>
+        /// One block step along the image's +U (its right edge, as the viewer
+        /// sees it) once PosterSurface has turned it upright, or false when the
+        /// board isn't squarely on a wall (floor, ceiling, 45 degrees). Worked
+        /// out from the same rotation the game renders the block with, so every
+        /// placement that LOOKS alike tiles alike, upside-down and sideways
+        /// ones included.
+        /// </summary>
+        public static bool TryGetUStep(BlockValue _bv, out Vector3i _step)
+        {
+            _step = Vector3i.zero;
+            var shape = _bv.Block?.shape;
+            if (shape == null)
+            {
+                return false;
+            }
+            Quaternion image = shape.GetRotation(_bv) * Quaternion.AngleAxis(PosterSurface.UprightRoll(_bv), Vector3.forward);
+            if ((image * Vector3.up).y < 0.99f)
+            {
+                return false; // lying flat: no upright image to tile
+            }
+            Vector3 u = image * Vector3.right;
+            if (Mathf.Abs(u.x) < 0.99f && Mathf.Abs(u.z) < 0.99f)
+            {
+                return false; // 45 degrees: neighbours aren't in its plane
+            }
+            _step = new Vector3i(Mathf.RoundToInt(u.x), 0, Mathf.RoundToInt(u.z));
+            return true;
+        }
 
         public static PosterLayout Compute(World _world, Vector3i _pos)
         {
@@ -43,11 +63,10 @@ namespace KitsunePosters
             // Multi-block posters don't tile: their cells are not 1m apart.
             // NB isMultiBlock is true for ANY block that declares MultiBlockDim,
             // "1,1,1" included (playerSignWood1x1 does), so check the dims.
-            if (url == null || bv.rotation > 3 || IsBiggerThanOneBlock(bv.Block))
+            if (url == null || IsBiggerThanOneBlock(bv.Block) || !TryGetUStep(bv, out Vector3i h))
             {
                 return layout;
             }
-            Vector3i h = UDir[bv.rotation];
             Vector3i v = new Vector3i(0, 1, 0);
 
             // Flood fill in the poster's plane over matching blocks.
@@ -106,12 +125,10 @@ namespace KitsunePosters
         public static List<Vector3i> Members(World _world, Vector3i _pos, PosterLayout _layout)
         {
             var members = new List<Vector3i>();
-            BlockValue bv = _world.GetBlock(_pos);
-            if (bv.rotation > 3)
+            if (!TryGetUStep(_world.GetBlock(_pos), out Vector3i h))
             {
                 return members;
             }
-            Vector3i h = UDir[bv.rotation];
             for (int a = 0; a < _layout.Cols; a++)
             {
                 for (int b = 0; b < _layout.Rows; b++)
@@ -126,12 +143,10 @@ namespace KitsunePosters
         public static List<Vector3i> PosterNeighbours(World _world, Vector3i _pos)
         {
             var result = new List<Vector3i>();
-            BlockValue bv = _world.GetBlock(_pos);
-            if (_world == null || bv.rotation > 3)
+            if (_world == null || !TryGetUStep(_world.GetBlock(_pos), out Vector3i h))
             {
                 return result;
             }
-            Vector3i h = UDir[bv.rotation];
             Vector3i v = new Vector3i(0, 1, 0);
             foreach (var step in new[] { h, h * -1, v, v * -1 })
             {
@@ -147,7 +162,8 @@ namespace KitsunePosters
         private static bool Matches(World _world, Vector3i _pos, BlockValue _like, string _url)
         {
             BlockValue bv = _world.GetBlock(_pos);
-            if (bv.type != _like.type || bv.rotation != _like.rotation)
+            // Same U step means the same facing, so the same wall.
+            if (bv.type != _like.type || !TryGetUStep(bv, out Vector3i step) || !TryGetUStep(_like, out Vector3i likeStep) || step != likeStep)
             {
                 return false;
             }

@@ -32,7 +32,15 @@ Admin command `kpadmin` (permission 0, runs on the server):
 
 ## Tiling
 
-Adjacent posters (same block, same rotation, same URL) forming a complete rectangle show ONE image spread across them, seamlessly: each tiled cell fills its whole block face. An L-shape or ragged group falls back to each poster showing the full image. Groups are computed from world state on every client, so nothing extra syncs; capped at 64 blocks. Editing or wiping one poster re-renders its neighbours and their groups.
+Adjacent posters (same block, same facing, same URL) forming a complete rectangle show ONE image spread across them, seamlessly: each tiled cell fills its whole block face. "Same facing" means they look alike once uprighted (see Rotation), so a poster placed upside down tiles with its upright neighbours. The direction along the wall is worked out from the block's rotation quaternion (`PosterTiling.TryGetUStep`), the same one the game renders with, not from a table. An L-shape or ragged group falls back to each poster showing the full image. Groups are computed from world state on every client, so nothing extra syncs; capped at 64 blocks. Editing or wiping one poster re-renders its neighbours and their groups.
+
+## Rotation
+
+The frameless board gives no hint which way is up, and R on a model block cycles rotations 0-10: four upright facings, the same four upside down (4-7), two flat and one sideways. On a wall the DLL turns the text anchor (and so the image and any sign text) right side up about the board's normal, whatever rotation was used (`PosterSurface.UprightRoll`): rotations 4-7 get 180 degrees, sideways ones 90. Posters lying flat on a floor or ceiling keep the block's own orientation. Multi-block posters have simple rotations only and are always upright.
+
+## Pickup
+
+E > Take (1 s) puts a poster back in your inventory; its text is not kept. Vanilla's `TEFeaturePickup` only allows that inside your own land claim (it was made for the combine station), so a postfix gives posters the usual pickup rule instead: anywhere you could place one (not another player's claim, not a trader), and a locked poster only for players allowed to edit it.
 
 ## Install
 
@@ -70,7 +78,7 @@ a dead window is diagnosable from the log alone.
 
 Confirmed in game (2026-10-28, Kitsune Cat Test server): the settings window's buttons work after the controller fix (presses log, the toggle persists to prefs); graffiti works in all three sizes - ghost pane while empty, one seamless image per multiblock, PNG transparency kept, board hidden; a 4000px imgur direct link loads within the caps. Dark art reads lighter in daylight because the decal is lit like the world (by design; it goes properly dark at night).
 
-Not yet exercised on a client (logic dedi-verified): tiling wall image direction per facing (fix = the UDir table in `PosterTiling.cs`), `kposters off/on` live re-render, chunk reload re-applying from cache.
+Not yet exercised on a client (logic dedi-verified): tiling wall image direction per facing (now derived from the block rotation; the old table had the two facings at rotation 1 and 3 mirrored), `kposters off/on` live re-render, chunk reload re-applying from cache, uprighting of rotated posters and E > Take (offline check of the rotation math for all 28 rotations only).
 
 Verified on a live dedi via telnet: Settings.xml parsing, `kposters` and `kpadmin`, allowlist matching (subdomains pass; lookalikes, suffix spoofs and raw IPs blocked), the SetText prefix firing on a real server (disallowed URL rewritten to `[blocked: <host>]`), group detection with correct cells (incl. that multi-block posters don't try to tile), L-shape fallback, radius wipe, and all three blocks + the bundle parsing and placing clean.
 

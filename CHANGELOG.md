@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Posters and graffiti always read right side up on a wall, whichever way they were rotated when placed. Rotating a poster onto a wall used to leave the image upside down (or sideways), and the blank board gave no way to tell beforehand.
+- Posters can be picked up: E > Take returns the block to your inventory. Works anywhere you could place one; locked posters only for players allowed to edit them.
+- Tiled murals on two of the four wall directions had their columns in reverse order; fixed. Posters placed upside down now tile with upright ones.
+
 ## 1.0.1 (2026-10-28)
 
 - Fixed sign text (URLs and plain sign messages on poster and graffiti blocks) drawing on top of everything and showing through walls. Text now respects world geometry like any other object.
