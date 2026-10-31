@@ -69,8 +69,56 @@ namespace KitsunePosters
             }
         }
 
-        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode, bool _hideBoard = false)
+        /// <summary>
+        /// Degrees to turn the image about the board's normal so it reads right
+        /// side up on a wall, whatever rotation the block was placed with (R
+        /// cycles through upside-down and sideways variants that the frameless
+        /// board gives no clue about). Floors and ceilings have no "up" to find
+        /// and keep the block's own orientation.
+        /// </summary>
+        public static float UprightRoll(BlockValue _bv)
         {
+            var shape = _bv.Block?.shape;
+            if (shape == null)
+            {
+                return 0f;
+            }
+            // World up as the board sees it. The text anchor carries no rotation
+            // of its own, so the block's rotation IS the board's frame.
+            Vector3 up = Quaternion.Inverse(shape.GetRotation(_bv)) * Vector3.up;
+            if (Mathf.Abs(up.z) > 0.7f)
+            {
+                return 0f; // lying flat
+            }
+            // A roll of r takes the quad's up (0,1) to (-sin r, cos r).
+            float deg = Mathf.Atan2(-up.x, up.y) * Mathf.Rad2Deg;
+            return Mathf.Round(deg / 90f) * 90f;
+        }
+
+        /// <summary>
+        /// Turns the text anchor (and so the image quad on it) upright. Set on
+        /// every refresh: the prefab's anchor has no rotation, and a pooled
+        /// GameObject must not keep the last block's roll.
+        /// </summary>
+        public static void SetRoll(SmartTextMesh[] _meshes, float _roll)
+        {
+            var rot = Quaternion.AngleAxis(_roll, Vector3.forward);
+            foreach (var mesh in _meshes)
+            {
+                if (mesh != null)
+                {
+                    mesh.transform.localRotation = rot;
+                }
+            }
+        }
+
+        public static void Apply(SmartTextMesh[] _meshes, Texture2D _tex, float _faceW, float _faceH, PosterLayout _layout, PosterFit _mode, float _roll, bool _hideBoard = false)
+        {
+            if (Mathf.Abs(Mathf.DeltaAngle(_roll, 90f)) < 1f || Mathf.Abs(Mathf.DeltaAngle(_roll, -90f)) < 1f)
+            {
+                // Turned sideways: the image's width runs along the board's height.
+                (_faceW, _faceH) = (_faceH, _faceW);
+            }
             float w, h;
             if (_layout.Tiled)
             {

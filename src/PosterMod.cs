@@ -46,11 +46,21 @@ namespace KitsunePosters
             {
                 Log.Warning("[KitsunePosters] Activation command methods not found - settings window only via 'kposters menu'.");
             }
+            // E > Take on posters (TEFeaturePickup in blocks.xml).
+            var pickupAllow = AccessTools.Method(typeof(TEFeaturePickup), nameof(TEFeaturePickup.AllowBlockActivationCommand));
+            if (pickupAllow != null)
+            {
+                harmony.Patch(pickupAllow, postfix: new HarmonyMethod(typeof(PosterPickupPatch), nameof(PosterPickupPatch.AllowPostfix)));
+            }
+            else
+            {
+                Log.Warning("[KitsunePosters] TEFeaturePickup.AllowBlockActivationCommand not found - Take works inside your own land claim only.");
+            }
             if (!GameManager.IsDedicatedServer)
             {
                 UnityEngine.Font.textureRebuilt += PosterSurface.OnFontRebuilt;
             }
-            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, E-menu commands).");
+            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, E-menu commands, pickup).");
         }
     }
 
@@ -94,6 +104,37 @@ namespace KitsunePosters
             XUiC_KitsunePosterSettings.Open();
             __result = true;
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Vanilla TEFeaturePickup only offers Take inside the player's OWN land
+    /// claim (it was made for the combine station). Posters are decor and get
+    /// the usual CanPickup rule instead: anywhere the player could place one
+    /// (not someone else's claim, not a trader), and a locked poster only for
+    /// whoever may edit it.
+    /// </summary>
+    public static class PosterPickupPatch
+    {
+        public static void AllowPostfix(TEFeaturePickup __instance, ITileEntityFeature _module, WorldBase _world, Vector3i _blockPos, ref bool __result)
+        {
+            if (!__instance.Equals(_module))
+            {
+                return; // another feature's command
+            }
+            var parent = __instance.Parent;
+            if (!PosterBlocks.IsPoster(parent?.TeData?.Block?.GetBlockName()))
+            {
+                return;
+            }
+            bool allowed = parent.PlayerPlaced
+                && _world.CanPickupBlockAt(_blockPos, _world.GetGameManager().GetPersistentLocalPlayer());
+            var lockable = parent.GetFeature<TEFeatureLockable>();
+            if (allowed && lockable != null && lockable.IsLocked())
+            {
+                allowed = lockable.IsUserAllowed(Platform.PlatformManager.InternalLocalUserIdentifier);
+            }
+            __result = allowed;
         }
     }
 
@@ -150,6 +191,8 @@ namespace KitsunePosters
 
             var world = GameManager.Instance.World;
             Vector3i pos = __instance.Parent.ToWorldPos();
+            float roll = PosterSurface.UprightRoll(world.GetBlock(pos));
+            PosterSurface.SetRoll(meshes, roll);
 
             // The raw text, not the filtered display text: the profanity filter
             // may touch the display copy, but the URL lives in the authored text.
@@ -185,7 +228,7 @@ namespace KitsunePosters
                     PosterSurface.ShowText(meshes);
                     return;
                 }
-                PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode, graffiti);
+                PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode, roll, graffiti);
             });
             NudgeOthers(world, pos, layout);
         }
