@@ -62,7 +62,7 @@ The graffiti blocks (paper + glue) are the decal variant, in the three block-siz
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: released (1.1.0)
+## Status: released (1.2.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 
