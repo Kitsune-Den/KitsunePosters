@@ -21,14 +21,19 @@ public static class BuildPosters
     private const float Thickness = 0.04f;
     private const float BoardSide = 1f; // +1: flush against +Z; -1: flush against -Z
 
-    private static readonly (string name, int w, int h)[] Sizes =
+    // Board width and height in metres, block-sized unless noted. The portrait
+    // boards sit centred in a 1x2 block volume (MultiBlockDim in blocks.xml),
+    // one block wide at the movie-poster ratios.
+    private static readonly (string name, float w, float h)[] Sizes =
     {
         ("poster_1x1", 1, 1),
         ("poster_2x2", 2, 2),
         ("poster_3x2", 3, 2),
+        ("poster_3by4", 1, 4f / 3f),
+        ("poster_9by16", 1, 16f / 9f),
     };
 
-    private static readonly (string name, int w, int h)[] GraffitiSizes =
+    private static readonly (string name, float w, float h)[] GraffitiSizes =
     {
         ("graffiti_1x1", 1, 1),
         ("graffiti_2x2", 2, 2),
@@ -85,15 +90,19 @@ public static class BuildPosters
         WriteBundle();
     }
 
-    private static void MakePrefab(string name, int w, int h, Material mat, float thickness, Material textMat)
+    private static void MakePrefab(string name, float w, float h, Material mat, float thickness, Material textMat)
     {
         var root = new GameObject(name);
+
+        // A 1 cm gap on the short side, the long side shrunk to match, so the
+        // board keeps its exact ratio (the DLL fills the image to that ratio).
+        float inset = 1f - 0.02f / Mathf.Min(w, h);
 
         var board = GameObject.CreatePrimitive(PrimitiveType.Cube);
         board.name = "Board";
         board.transform.SetParent(root.transform, false);
         board.transform.localPosition = new Vector3(0f, 0f, BoardSide * (0.5f - thickness / 2f));
-        board.transform.localScale = new Vector3(w - 0.02f, h - 0.02f, thickness);
+        board.transform.localScale = new Vector3(w * inset, h * inset, thickness);
         var renderer = board.GetComponent<MeshRenderer>();
         renderer.sharedMaterial = mat;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -109,7 +118,7 @@ public static class BuildPosters
         var box = root.AddComponent<BoxCollider>();
         float grip = Mathf.Max(thickness, 0.06f);
         box.center = new Vector3(0f, 0f, BoardSide * (0.5f - grip / 2f));
-        box.size = new Vector3(w - 0.02f, h - 0.02f, grip);
+        box.size = new Vector3(w * inset, h * inset, grip);
 
         // TEFeatureSignable finds this TextMesh and drives it; our DLL parents
         // the image quad to it. TextMesh reads correctly from its -Z side,

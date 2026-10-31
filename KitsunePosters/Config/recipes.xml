@@ -12,6 +12,14 @@
 			<ingredient name="resourceWood" count="24"/>
 			<ingredient name="resourcePaper" count="16"/>
 		</recipe>
+		<recipe name="kitsunePoster3by4" count="1" craft_time="7">
+			<ingredient name="resourceWood" count="11"/>
+			<ingredient name="resourcePaper" count="6"/>
+		</recipe>
+		<recipe name="kitsunePoster9by16" count="1" craft_time="8">
+			<ingredient name="resourceWood" count="14"/>
+			<ingredient name="resourcePaper" count="8"/>
+		</recipe>
 		<recipe name="kitsuneGraffiti1x1" count="1" craft_time="5">
 			<ingredient name="resourcePaper" count="4"/>
 			<ingredient name="resourceGlue" count="1"/>

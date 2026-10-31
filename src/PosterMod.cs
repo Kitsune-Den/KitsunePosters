@@ -207,16 +207,25 @@ namespace KitsunePosters
             var layout = PosterTiling.Compute(world, pos);
             PosterSurface.HideText(meshes);
 
-            // The image fills the board's face: the block extent, less a lip.
-            var block = __instance.Parent.TeData.Block;
-            float faceW = 1f, faceH = 1f;
-            if (block.isMultiBlock)
+            // The image fills the board's face, less a lip: 6 cm off the short
+            // side and the long side in proportion, so a 9:16 board shows a
+            // 9:16 face. Falls back to the block extent should a model ever
+            // lack its Board.
+            float faceW, faceH;
+            if (PosterSurface.TryGetBoardSize(meshes, out faceW, out faceH))
             {
-                faceW = block.multiBlockPos.dim.x;
-                faceH = block.multiBlockPos.dim.y;
+                float lip = 1f - 0.06f / UnityEngine.Mathf.Min(faceW, faceH);
+                faceW *= lip;
+                faceH *= lip;
             }
-            faceW -= 0.08f;
-            faceH -= 0.08f;
+            else
+            {
+                var block = __instance.Parent.TeData.Block;
+                faceW = block.isMultiBlock ? block.multiBlockPos.dim.x : 1f;
+                faceH = block.isMultiBlock ? block.multiBlockPos.dim.y : 1f;
+                faceW -= 0.08f;
+                faceH -= 0.08f;
+            }
 
             var mode = PosterUrl.ExtractMode(__instance.signText?.Text);
             PosterTextureManager.Get(url, tex =>

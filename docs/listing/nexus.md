@@ -6,7 +6,7 @@ Place a poster, press E, paste an image link. The poster downloads the image on 
 
 ## What you get
 
-- **Three frameless poster boards**: 1x1, 2x2 and 3x2 blocks, craftable from wood and paper, placeable on any wall.
+- **Five frameless poster boards**: 1x1, 2x2 and 3x2 blocks, plus 3:4 and 9:16 movie-poster shapes, craftable from wood and paper, placeable on any wall.
 - **Graffiti in three sizes too**: decal blocks with no board at all, 1x1, 2x2 and 3x2. Paste a link to a transparent PNG and the art sits straight on the wall, transparency kept, like spray paint. The faint placement ghost disappears once the image loads.
 - **Paste almost any link.** Direct PNG/JPG links work, and so do the links people actually copy: imgur pages, galleries and albums resolve to their image automatically, giphy links show the GIF's still frame, and other pages are resolved through their preview image. Fragments, crop suffixes and other link noise are handled.
 - **Fill, fit or stretch.** The image fills the board by default (centre cropped like a printed poster). Type `fit` or `stretch` after the link to letterbox or stretch instead.
