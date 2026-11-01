@@ -252,6 +252,27 @@ namespace KitsunePosters
             }
         }
 
+        /// <summary>
+        /// The board's own width and height (its scale; the prefab builds it
+        /// from a unit cube). Portrait boards don't fill their block volume,
+        /// so the face can't be read off the multi-block dims.
+        /// </summary>
+        public static bool TryGetBoardSize(SmartTextMesh[] _meshes, out float _w, out float _h)
+        {
+            foreach (var mesh in _meshes)
+            {
+                var board = mesh != null && mesh.transform.parent != null ? mesh.transform.parent.Find("Board") : null;
+                if (board != null)
+                {
+                    _w = board.localScale.x;
+                    _h = board.localScale.y;
+                    return true;
+                }
+            }
+            _w = _h = 0f;
+            return false;
+        }
+
         private static void SetTextVisible(SmartTextMesh _mesh, bool _visible)
         {
             var renderer = _mesh.GetComponent<MeshRenderer>();

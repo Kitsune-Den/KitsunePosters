@@ -48,9 +48,9 @@ DLL mod: EAC off, and the mod goes on the server **and every client**. Clients w
 
 ## Blocks
 
-Three frameless poster boards from the mod's own bundle, craftable from wood + paper: `kitsunePoster1x1`, `kitsunePoster2x2` and `kitsunePoster3x2` (multi-block, one tile entity, no seams). The image fills the board's face. Tiling across neighbours is for the 1x1 only; bigger walls, use the bigger posters.
+Five frameless poster boards from the mod's own bundle, craftable from wood + paper: `kitsunePoster1x1`, `kitsunePoster2x2` and `kitsunePoster3x2` (multi-block, one tile entity, no seams), plus two movie-poster shapes, `kitsunePoster3by4` and `kitsunePoster9by16`: one block wide, the board centred in a 1x2 volume. The image fills the board's face, which the DLL measures off the board itself (`PosterSurface.TryGetBoardSize`), not the block dims, since the portrait boards don't fill their blocks. Board inset and image lip both scale with the board, so every face has its exact ratio (a 9:16 image fills the 9:16 poster uncropped). Tiling across neighbours is for the 1x1 only; bigger walls, use the bigger posters.
 
-The graffiti blocks (paper + glue) are the decal variant, in the same three sizes: `kitsuneGraffiti1x1`, `kitsuneGraffiti2x2` and `kitsuneGraffiti3x2`. Their board is a faint transparent ghost, and once an image loads the DLL hides the board entirely and keeps the image's PNG transparency, so the art sits straight on the wall like spray paint. The ghost's Fade-mode Standard material is what the image quad clones (color reset to white), so the one material drives both looks. Graffiti tiles with graffiti (same block type, 1x1 only), never with posters.
+The graffiti blocks (paper + glue) are the decal variant, in the three block-sized shapes: `kitsuneGraffiti1x1`, `kitsuneGraffiti2x2` and `kitsuneGraffiti3x2`. Their board is a faint transparent ghost, and once an image loads the DLL hides the board entirely and keeps the image's PNG transparency, so the art sits straight on the wall like spray paint. The ghost's Fade-mode Standard material is what the image quad clones (color reset to white), so the one material drives both looks. Graffiti tiles with graffiti (same block type, 1x1 only), never with posters.
 
 ## Model pipeline (HouseCat-style)
 
@@ -62,7 +62,7 @@ The graffiti blocks (paper + glue) are the decal variant, in the same three size
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: released (1.1.0)
+## Status: released (1.2.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 

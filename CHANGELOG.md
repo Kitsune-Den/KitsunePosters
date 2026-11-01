@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 (2026-11-01)
+
+- Movie-poster shapes: two new poster boards at 3:4 and 9:16, one block wide and two tall. A 9:16 or 3:4 image fills them with nothing cropped.
+- The 3x2 poster's and graffiti's image face is now exactly 3:2 (it was a hair wider), so 3:2 images fill it uncropped too.
+
 ## 1.1.0 (2026-10-31)
 
 - Posters and graffiti always read right side up on a wall, whichever way they were rotated when placed. Rotating a poster onto a wall used to leave the image upside down (or sideways), and the blank board gave no way to tell beforehand.
