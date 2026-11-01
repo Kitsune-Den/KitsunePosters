@@ -6,19 +6,31 @@ Place a poster, press E, paste an image link. The poster downloads the image on 
 
 ## What you get
 
-- **Five frameless poster boards**: 1x1, 2x2 and 3x2 blocks, plus 3:4 and 9:16 movie-poster shapes, craftable from wood and paper, placeable on any wall.
+- **Eight frameless poster boards**: 1x1, 2x2 and 3x2 blocks, plus movie-poster shapes: 2:3 in three sizes (0.5 x 0.75 m, 1 x 1.5 m and 2 x 3 m), 3:4 and 9:16. Craftable from wood and paper, placeable on any wall. A thin dark rim of board shows round the image.
 - **Graffiti in three sizes too**: decal blocks with no board at all, 1x1, 2x2 and 3x2. Paste a link to a transparent PNG and the art sits straight on the wall, transparency kept, like spray paint. The faint placement ghost disappears once the image loads.
 - **Paste almost any link.** Direct PNG/JPG links work, and so do the links people actually copy: imgur pages, galleries and albums resolve to their image automatically, giphy links show the GIF's still frame, and other pages are resolved through their preview image. Fragments, crop suffixes and other link noise are handled.
-- **Fill, fit or stretch.** The image fills the board by default (centre cropped like a printed poster). Type `fit` or `stretch` after the link to letterbox or stretch instead.
-- **Poster walls.** Identical 1x1 posters with the same link, placed in a rectangle, merge into ONE image spread seamlessly across the whole wall. Build a 4x3 mural out of twelve posters.
+- **Fill, fit or stretch.** The image fills the board by default (centre cropped like a printed poster). Type `fit` after the link to show the whole image with nothing cut off (handy for graffiti), or `stretch` to squash it to the board's shape.
+- **Poster walls.** 1x1 posters with the same link, forming a complete rectangle of any size, merge into ONE image spread seamlessly across the whole wall: 2x1, 4x3, 8x8, up to 64 posters. Different links stay separate pictures, and a gap or an L shape means each poster shows the whole image on its own. Works for 1x1 graffiti too.
 - **Cached.** Each image downloads once per machine, ever. Chunk reloads come from disk.
+
+## Where to host your images
+
+Any site that gives you a direct image link works. These are good ones:
+
+- **Imgur**: page, gallery and album links all work as copied.
+- **Postimages**: use the "Direct link".
+- **Catbox**: its links are already direct.
+- **ImgBB**: pick the direct link from the embed codes.
+- **Flickr**: right click the photo, "Copy image address".
+
+Rule of thumb: if the link opens just the picture, it works. If a server limits which sites are allowed, ask the owner which ones.
 
 ## For server owners
 
 - **A settings window, no files, no console**: press E on any poster and pick "Poster settings". Admins see the site allowlist and change it with buttons; changes save and apply at once, for remote admins too. The console works as well (`kpadmin domains add imgur.com`, `remove`, `allowall`), and so does `Settings.xml`. A blocked URL is rewritten to `[blocked: domain]` in the sign text itself, server side, before it ever syncs.
 - **`kpadmin wipe <x> <y> <z> [radius]`**: clear any poster's link from the console, with an area option for cleaning up after someone.
 - **Hard caps** baked in: 5 MB per image, 4096px max, 15 second timeout, PNG/JPG only.
-- Images are fetched by each client directly, so the URL's host sees each player's IP, the same as posting a link in chat. The allowlist exists for exactly this.
+- Images are fetched by each client directly, so the site hosting an image sees the IP of each player whose game loads it, the same as clicking a link. Server owners never see anyone's IP from a poster. The risk is a player linking to a server they run and reading its logs; locking the allowlist to known image hosts (say, imgur.com) shuts that down.
 
 ## For players
 

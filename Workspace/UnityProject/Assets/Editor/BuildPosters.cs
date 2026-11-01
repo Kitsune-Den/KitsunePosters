@@ -22,8 +22,9 @@ public static class BuildPosters
     private const float BoardSide = 1f; // +1: flush against +Z; -1: flush against -Z
 
     // Board width and height in metres, block-sized unless noted. The portrait
-    // boards sit centred in a 1x2 block volume (MultiBlockDim in blocks.xml),
-    // one block wide at the movie-poster ratios.
+    // boards sit centred in their block volume (MultiBlockDim in blocks.xml):
+    // 3:4, 9:16 and 2:3 one block wide in 1x2, the small 2:3 in a single
+    // block, the large 2:3 filling 2x3.
     private static readonly (string name, float w, float h)[] Sizes =
     {
         ("poster_1x1", 1, 1),
@@ -31,6 +32,9 @@ public static class BuildPosters
         ("poster_3x2", 3, 2),
         ("poster_3by4", 1, 4f / 3f),
         ("poster_9by16", 1, 16f / 9f),
+        ("poster_2by3_small", 0.5f, 0.75f),
+        ("poster_2by3", 1, 1.5f),
+        ("poster_2by3_large", 2, 3),
     };
 
     private static readonly (string name, float w, float h)[] GraffitiSizes =
