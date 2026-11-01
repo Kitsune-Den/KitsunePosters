@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 (2026-11-01)
 
 - 2:3 posters, the classic movie one-sheet ratio, in three sizes: small (0.5 x 0.75 m, fits in one block), regular (1 x 1.5 m, one block wide and two tall) and large (2 x 3 m). A 2:3 image fills them with nothing cropped. The small one doesn't tile.
 
