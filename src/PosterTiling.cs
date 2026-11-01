@@ -63,7 +63,7 @@ namespace KitsunePosters
             // Multi-block posters don't tile: their cells are not 1m apart.
             // NB isMultiBlock is true for ANY block that declares MultiBlockDim,
             // "1,1,1" included (playerSignWood1x1 does), so check the dims.
-            if (url == null || IsBiggerThanOneBlock(bv.Block) || !TryGetUStep(bv, out Vector3i h))
+            if (url == null || IsBiggerThanOneBlock(bv.Block) || OptsOutOfTiling(bv.Block) || !TryGetUStep(bv, out Vector3i h))
             {
                 return layout;
             }
@@ -182,6 +182,16 @@ namespace KitsunePosters
             }
             var dim = _block.multiBlockPos.dim;
             return dim.x != 1 || dim.y != 1 || dim.z != 1;
+        }
+
+        /// <summary>
+        /// Tiled cells fill the whole 1m face, so a board smaller than its
+        /// block (the small 2:3) sets KitsuneTiling false in blocks.xml.
+        /// </summary>
+        public static bool OptsOutOfTiling(Block _block)
+        {
+            var props = _block.Properties;
+            return props.Values.ContainsKey("KitsuneTiling") && !props.GetBool("KitsuneTiling");
         }
 
         public static bool IsPosterBlock(BlockValue _bv)

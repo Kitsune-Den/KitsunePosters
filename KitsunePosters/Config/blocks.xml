@@ -102,6 +102,58 @@
 			<property name="SortOrder2" value="0004"/>
 		</block>
 
+		<!-- 2:3, the classic one-sheet ratio, in three sizes. The small board
+		     sits in a single block but is smaller than it, so it opts out of
+		     tiling (tiled cells fill the whole 1m face). -->
+		<block name="kitsunePoster2by3Small">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="55"/>
+					<property name="LineWidth" value="0.45"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2by3_small"/>
+			<property name="KitsuneTiling" value="false"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
+			<property name="SortOrder2" value="0005"/>
+		</block>
+
+		<block name="kitsunePoster2by3">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="LineCount" value="4"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2by3"/>
+			<property name="MultiBlockDim" value="1,2,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
+			<property name="SortOrder2" value="0006"/>
+		</block>
+
+		<block name="kitsunePoster2by3Large">
+			<property name="Extends" value="kitsunePoster1x1"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="DisplayType" value="blockMulti"/>
+			<property class="CompositeFeatures">
+				<property class="TEFeatureSignable">
+					<property name="FontSize" value="260"/>
+					<property name="LineCount" value="6"/>
+					<property name="LineWidth" value="1.8"/>
+				</property>
+			</property>
+			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2by3_large"/>
+			<property name="MultiBlockDim" value="2,3,1"/>
+			<property name="OnlySimpleRotations" value="true"/>
+			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
+			<property name="SortOrder2" value="0007"/>
+		</block>
+
 		<!-- Graffiti decal: a near-invisible frame that shows the image ALONE,
 		     with its PNG transparency kept - spray art straight on the wall.
 		     While empty it shows a faint ghost board so it can be found. -->
@@ -110,7 +162,7 @@
 			<property name="CreativeMode" value="Player"/>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_1x1"/>
 			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
-			<property name="SortOrder2" value="0005"/>
+			<property name="SortOrder2" value="0008"/>
 		</block>
 
 		<block name="kitsuneGraffiti2x2">
@@ -129,7 +181,7 @@
 			<property name="MultiBlockDim" value="2,2,1"/>
 			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
-			<property name="SortOrder2" value="0006"/>
+			<property name="SortOrder2" value="0009"/>
 		</block>
 
 		<block name="kitsuneGraffiti3x2">
@@ -148,7 +200,7 @@
 			<property name="MultiBlockDim" value="3,2,1"/>
 			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
-			<property name="SortOrder2" value="0007"/>
+			<property name="SortOrder2" value="0010"/>
 		</block>
 
 	</append>
