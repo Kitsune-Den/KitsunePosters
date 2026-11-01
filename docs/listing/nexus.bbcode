@@ -49,7 +49,11 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 
 [size=5][color=#FF8C1A]Install[/color][/size]
 
-DLL mod: [b][color=#FF5252]EAC off[/color][/b], and the mod goes on the [b]server and every client[/b]. Clients without it see a plain board with the link as text. Single player works too.
+DLL mod: [b][color=#FF5252]EAC off[/color][/b], and the mod goes on the [b]server and every client[/b]. Single player works too.
+
+The folder should be [i]Mods/KitsunePosters/ModInfo.xml[/i]. Unzipping can add an extra folder ([i]Mods/KitsunePosters-1.3.0/KitsunePosters/...[/i]), and the game silently skips the mod when it's nested like that.
+
+[b]Can't join a friend?[/b] "Unexpected data received. Server is either running an incompatible version or requires the client to install mods" means the mod isn't running on the joining PC, even if it's in the Mods folder. Check that EAC is off and the folder is right on both machines. Your newest log in [i]%APPDATA%\7DaysToDie\logs[/i] ([i]output_log_client...[/i]) has [MODS] lines near the top that say whether KitsunePosters loaded.
 
 [size=5][color=#FF8C1A]Notes[/color][/size]
 
