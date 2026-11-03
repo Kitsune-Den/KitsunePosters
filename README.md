@@ -50,7 +50,7 @@ E > Take (1 s) puts a poster back in your inventory; its text is not kept. Vanil
 
 DLL mod: EAC off, and the mod goes on the server **and every client**. A client without the mod loaded can't join a server that has it: the settings window's `NetPackageKitsunePosters` is in the package list the server sends on connect, and a client that doesn't know a name in that list disconnects with "Unexpected data received. Server is either running an incompatible version or requires the client to install mods." (`auth_unknownnetpackage`, from `NetPackageManager.IdMappingsReceived`). The client log then has `[NET] Unknown package type NetPackageKitsunePosters`.
 
-When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.3.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
+When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.4.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
 
 ## Blocks
 
@@ -68,7 +68,7 @@ The graffiti blocks (paper + glue) are the decal variant, in the three block-siz
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: released (1.3.0)
+## Status: released (1.4.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 
