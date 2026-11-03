@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add the word "flip" after a poster's link to turn its image upside down. It's for the 3:4 poster that was reported showing its image upside down on a wall: multi-block posters can't use advanced rotation, so there was no way to put it right. "flip" works on any poster that isn't part of a tiled mural.
+- When a poster's model is turned differently from the rotation stored for its block, a likely cause of an upside-down image, the client log now gets one warning for that poster with both rotations, to help track the cause down.
+
 ## 1.3.0 (2026-11-01)
 
 - 2:3 posters, the classic movie one-sheet ratio, in three sizes: small (0.5 x 0.75 m, fits in one block), regular (1 x 1.5 m, one block wide and two tall) and large (2 x 3 m). A 2:3 image fills them with nothing cropped. The small one doesn't tile.

@@ -83,9 +83,16 @@ namespace KitsunePosters
             {
                 return 0f;
             }
-            // World up as the board sees it. The text anchor carries no rotation
-            // of its own, so the block's rotation IS the board's frame.
-            Vector3 up = Quaternion.Inverse(shape.GetRotation(_bv)) * Vector3.up;
+            // The text anchor carries no rotation of its own, so the block's
+            // rotation IS the board's frame.
+            return UprightRoll(shape.GetRotation(_bv));
+        }
+
+        /// <summary>The same, for a board frame given as a world rotation.</summary>
+        public static float UprightRoll(Quaternion _board)
+        {
+            // World up as the board sees it.
+            Vector3 up = Quaternion.Inverse(_board) * Vector3.up;
             if (Mathf.Abs(up.z) > 0.7f)
             {
                 return 0f; // lying flat
@@ -93,6 +100,22 @@ namespace KitsunePosters
             // A roll of r takes the quad's up (0,1) to (-sin r, cos r).
             float deg = Mathf.Atan2(-up.x, up.y) * Mathf.Rad2Deg;
             return Mathf.Round(deg / 90f) * 90f;
+        }
+
+        /// <summary>
+        /// The roll the board actually needs as rendered: the model root's
+        /// world rotation, or NaN when there's no model to read.
+        /// </summary>
+        public static float RenderedRoll(SmartTextMesh[] _meshes)
+        {
+            foreach (var mesh in _meshes)
+            {
+                if (mesh != null && mesh.transform.parent != null)
+                {
+                    return UprightRoll(mesh.transform.parent.rotation);
+                }
+            }
+            return float.NaN;
         }
 
         /// <summary>

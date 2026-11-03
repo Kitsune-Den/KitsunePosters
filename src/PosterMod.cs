@@ -191,8 +191,10 @@ namespace KitsunePosters
 
             var world = GameManager.Instance.World;
             Vector3i pos = __instance.Parent.ToWorldPos();
-            float roll = PosterSurface.UprightRoll(world.GetBlock(pos));
+            BlockValue bv = world.GetBlock(pos);
+            float roll = PosterSurface.UprightRoll(bv);
             PosterSurface.SetRoll(meshes, roll);
+            LogRollMismatch(meshes, pos, bv, roll, blockName);
 
             // The raw text, not the filtered display text: the profanity filter
             // may touch the display copy, but the URL lives in the authored text.
@@ -206,6 +208,16 @@ namespace KitsunePosters
 
             var layout = PosterTiling.Compute(world, pos);
             PosterSurface.HideText(meshes);
+
+            // "flip" next to the URL turns the image half round, for when the
+            // uprighting gets it wrong and the block can't be rotated another
+            // way (multi-block posters have simple rotations only). Not on a
+            // tiled cell: it would turn in place and scramble the mural.
+            if (!layout.Tiled && PosterUrl.HasFlip(__instance.signText?.Text))
+            {
+                roll += 180f;
+                PosterSurface.SetRoll(meshes, roll);
+            }
 
             // The image fills the board's face, less a lip: 6 cm off the short
             // side and the long side in proportion, so a 9:16 board shows a
@@ -240,6 +252,26 @@ namespace KitsunePosters
                 PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode, roll, graffiti);
             });
             NudgeOthers(world, pos, layout);
+        }
+
+        private static readonly System.Collections.Generic.HashSet<Vector3i> loggedMismatch = new System.Collections.Generic.HashSet<Vector3i>();
+
+        /// <summary>
+        /// The roll comes from the block's stored rotation; the model renders
+        /// with its transform. Should they ever disagree (a poster showing
+        /// upside down), say so once per poster with what's needed to chase it.
+        /// </summary>
+        private static void LogRollMismatch(SmartTextMesh[] _meshes, Vector3i _pos, BlockValue _bv, float _roll, string _blockName)
+        {
+            float rendered = PosterSurface.RenderedRoll(_meshes);
+            if (float.IsNaN(rendered) || UnityEngine.Mathf.Abs(UnityEngine.Mathf.DeltaAngle(rendered, _roll)) < 1f)
+            {
+                return;
+            }
+            if (loggedMismatch.Add(_pos))
+            {
+                Log.Warning($"[KitsunePosters] {_blockName} at {_pos}: rotation {_bv.rotation} gives roll {_roll}, but the model renders needing {rendered} (model rotation {_meshes[0]?.transform.parent?.rotation.eulerAngles}). Add \"flip\" after the URL to turn the image.");
+            }
         }
 
         /// <summary>
@@ -306,6 +338,23 @@ namespace KitsunePosters
                 }
             }
             return PosterFit.Fill;
+        }
+
+        /// <summary>A bare "flip" next to the URL turns the image upside down.</summary>
+        public static bool HasFlip(string _text)
+        {
+            if (string.IsNullOrEmpty(_text))
+            {
+                return false;
+            }
+            foreach (var token in _text.Split(' ', '\n', '\r', '\t'))
+            {
+                if (token.Trim().ToLowerInvariant() == "flip")
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>First http(s) token in the sign text, or null.</summary>
