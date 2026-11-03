@@ -27,8 +27,8 @@ Admin command `kpadmin` (permission 0, runs on the server):
 
 - `kpadmin domains` / `domains add <site>` / `domains remove <site>` / `domains allowall` shows and edits the allowlist in game; changes persist to Settings.xml and apply immediately. Adding the first real site drops a lone `*` (that is what starting an allowlist means); URLs pasted as the site are reduced to their host.
 - `kpadmin wipe <x> <y> <z> [radius]` clears poster text at that spot or in a cube around it.
-- `kpadmin info <x> <y> <z>` shows a poster's text and its tiling group.
-- `kpadmin place / text / load` are testing helpers for driving posters from the server console.
+- `kpadmin info <x> <y> <z>` shows a poster's text, rotation, upright roll and tiling group.
+- `kpadmin place / text / load` are testing helpers for driving posters from the server console; `place` takes an optional rotation (0-27). The in-game rotation test is `docs/testing/rotation-and-flip.md`.
 
 ## Tiling
 
@@ -36,7 +36,7 @@ Adjacent posters (same block, same facing, same URL) forming a complete rectangl
 
 ## Rotation
 
-The frameless board gives no hint which way is up, and R on a model block cycles rotations 0-10: four upright facings, the same four upside down (4-7), two flat and one sideways. On a wall the DLL turns the text anchor (and so the image and any sign text) right side up about the board's normal, whatever rotation was used (`PosterSurface.UprightRoll`): rotations 4-7 get 180 degrees, sideways ones 90. Posters lying flat on a floor or ceiling keep the block's own orientation. Multi-block posters have simple rotations only (R turns them about the vertical), so they should always come out upright; a 3:4 board has still been reported upside down on a wall, cause not yet found.
+The frameless board gives no hint which way is up, and R on a model block cycles rotations 0-10: four upright facings, the same four upside down (4-7), two flat and one sideways. On a wall the DLL turns the text anchor (and so the image and any sign text) right side up about the board's normal, whatever rotation was used (`PosterSurface.UprightRoll`): rotations 4-7 get 180 degrees, sideways ones 90. Posters lying flat on a floor or ceiling keep the block's own orientation. Multi-block posters get the full set too (the game rotates a multi-block's child blocks with it, as for vanilla's ~700 freely rotating multi-blocks); turned sideways, a portrait board hangs landscape and the image turns with it, so a 3:4 board shows a 4:3 image. Because of the uprighting, the upside-down variant of a facing looks exactly like the upright one, so rotation alone can't turn an image over; a 3:4 board has been reported upside down on a wall (cause not yet found).
 
 The escape hatch is the word `flip` after the URL (like `fit`), which turns the image 180 degrees on a single poster (ignored on a tiled cell, where it would scramble the mural). And the DLL compares the roll it worked out from the block's stored rotation against the model's actual rendered rotation; if they ever disagree it logs one `[KitsunePosters] ... renders needing ...` warning per poster with the block, rotation and both rolls, which is what to ask for in a bug report.
 

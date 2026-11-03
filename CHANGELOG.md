@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Add the word "flip" after a poster's link to turn its image upside down. It's for the 3:4 poster that was reported showing its image upside down on a wall: multi-block posters can't use advanced rotation, so there was no way to put it right. "flip" works on any poster that isn't part of a tiled mural.
+- Add the word "flip" after a poster's link to turn its image upside down. It's for the 3:4 poster that was reported showing its image upside down on a wall: the uprighting makes every rotation of a poster on that wall look the same, so rotating it again couldn't put it right. "flip" works on any poster that isn't part of a tiled mural.
+- The multi-block posters and graffiti now have advanced rotation like the 1x1 (2x2, 3x2 and the movie-poster shapes). Turned sideways, a portrait poster hangs landscape: the 3:4 board shows a 4:3 image the right way up.
 - When a poster's model is turned differently from the rotation stored for its block, a likely cause of an upside-down image, the client log now gets one warning for that poster with both rotations, to help track the cause down.
 
 ## 1.3.0 (2026-11-01)

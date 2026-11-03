@@ -17,7 +17,7 @@ namespace KitsunePosters
             "kpadmin domains allowall           allow every site (the default)\n" +
             "kpadmin wipe <x> <y> <z> [radius]  clear the poster text there (and around, with a radius)\n" +
             "kpadmin info <x> <y> <z>           show a poster's text and its tiling group\n" +
-            "kpadmin place <x> <y> <z> [block]  put a poster block there (testing)\n" +
+            "kpadmin place <x> <y> <z> [block] [rotation 0-27]  put a poster block there (testing)\n" +
             "kpadmin text <x> <y> <z> <text..>  set a poster's text server side (testing)\n" +
             "kpadmin load <x> <z>               keep that area loaded with no one there (testing)";
 
@@ -90,6 +90,8 @@ namespace KitsunePosters
                         return;
                     }
                     Out($"text: '{signable.signText?.Text}'");
+                    BlockValue infoBv = world.GetBlock(infoAt);
+                    Out($"rotation: {infoBv.rotation}, upright roll: {PosterSurface.UprightRoll(infoBv)}");
                     var layout = PosterTiling.Compute(world, infoAt);
                     Out(layout.Tiled
                         ? $"group: {layout.Cols}x{layout.Rows}, this block at col {layout.Col}, row {layout.Row}"
@@ -105,8 +107,19 @@ namespace KitsunePosters
                         Out($"Block {blockName} not known - is the mod's blocks.xml loaded?");
                         return;
                     }
+                    // Any of the 28 rotations, including the ones R can't reach on
+                    // a multi-block poster, to check the uprighting against.
+                    if (_params.Count > 5)
+                    {
+                        if (!byte.TryParse(_params[5], out byte rot) || rot > 27)
+                        {
+                            Out("Rotation must be 0-27.");
+                            return;
+                        }
+                        bv.rotation = rot;
+                    }
                     world.SetBlockRPC(placeAt, bv);
-                    Out($"{blockName} placed at {placeAt}.");
+                    Out($"{blockName} placed at {placeAt}, rotation {bv.rotation}.");
                     return;
                 }
                 case "text" when _params.Count >= 5 && TryPos(_params, out Vector3i textAt):

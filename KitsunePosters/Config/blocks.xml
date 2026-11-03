@@ -44,7 +44,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2x2"/>
 			<property name="MultiBlockDim" value="2,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0001"/>
 		</block>
@@ -63,7 +62,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_3x2"/>
 			<property name="MultiBlockDim" value="3,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0002"/>
 		</block>
@@ -81,7 +79,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_3by4"/>
 			<property name="MultiBlockDim" value="1,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0003"/>
 		</block>
@@ -97,7 +94,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_9by16"/>
 			<property name="MultiBlockDim" value="1,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0004"/>
 		</block>
@@ -131,7 +127,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2by3"/>
 			<property name="MultiBlockDim" value="1,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0006"/>
 		</block>
@@ -149,7 +144,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?poster_2by3_large"/>
 			<property name="MultiBlockDim" value="2,3,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsunePoster1x1Desc"/>
 			<property name="SortOrder2" value="0007"/>
 		</block>
@@ -179,7 +173,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_2x2"/>
 			<property name="MultiBlockDim" value="2,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
 			<property name="SortOrder2" value="0009"/>
 		</block>
@@ -198,7 +191,6 @@
 			</property>
 			<property name="Model" value="#@modfolder:Resources/KitsunePosters.unity3d?graffiti_3x2"/>
 			<property name="MultiBlockDim" value="3,2,1"/>
-			<property name="OnlySimpleRotations" value="true"/>
 			<property name="DescriptionKey" value="kitsuneGraffiti1x1Desc"/>
 			<property name="SortOrder2" value="0010"/>
 		</block>
