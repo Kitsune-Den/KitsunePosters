@@ -70,7 +70,7 @@ The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks re
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 
-Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
+Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, imgur direct links that are previews or undecodable (`i.imgur.com/<id>_d.webp`, `.gif`, `.gifv`, `.mp4`; query dropped) to `i.imgur.com/<id>.png`, the original served as PNG/JPG, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
 
 Found and fixed after the first settings-window playtest: the window's XML
 controller attribute lacked the namespace (`controller="KitsunePosters.KitsunePosterSettings, KitsunePosters"`

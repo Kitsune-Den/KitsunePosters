@@ -5,6 +5,7 @@
 - Add the word "flip" after a poster's link to turn its image upside down. It's for the 3:4 poster that was reported showing its image upside down on a wall: the uprighting makes every rotation of a poster on that wall look the same, so rotating it again couldn't put it right. "flip" works on any poster that isn't part of a tiled mural.
 - The multi-block posters and graffiti now have advanced rotation like the 1x1 (2x2, 3x2 and the movie-poster shapes). Turned sideways, a portrait poster hangs landscape: the 3:4 board shows a 4:3 image the right way up.
 - When a poster's model is turned differently from the rotation stored for its block, a likely cause of an upside-down image, the client log now gets one warning for that poster with both rotations, to help track the cause down.
+- imgur image addresses copied by right-clicking an image (`i.imgur.com/<id>_d.webp`) now load: they were a small WebP preview the game can't decode, and are now swapped for the full image. imgur's GIF and video links get a still the same way.
 
 ## 1.3.0 (2026-11-01)
 

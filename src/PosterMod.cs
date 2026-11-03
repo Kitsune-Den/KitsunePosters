@@ -404,6 +404,31 @@ namespace KitsunePosters
                     }
                 }
 
+                // imgur's "copy image address" gives i.imgur.com/<id>_d.webp
+                // (often with ?maxwidth=...): a small preview, in a format Unity
+                // can't decode. <id>.png is the original, served as PNG/JPG.
+                // GIF/GIFV/MP4 ids rewrite the same way to a still.
+                if (host == "i.imgur.com")
+                {
+                    string file = uri.AbsolutePath.Trim('/');
+                    int dot = file.LastIndexOf('.');
+                    if (dot > 0 && !file.Contains("/"))
+                    {
+                        string id = file.Substring(0, dot);
+                        string ext = file.Substring(dot + 1).ToLowerInvariant();
+                        bool preview = id.EndsWith("_d");
+                        if (preview)
+                        {
+                            id = id.Substring(0, id.Length - 2);
+                        }
+                        bool decodable = ext == "png" || ext == "jpg" || ext == "jpeg";
+                        if (id.Length > 0 && (preview || !decodable))
+                        {
+                            return "https://i.imgur.com/" + id + ".png";
+                        }
+                    }
+                }
+
                 // Giphy: pages advertise WebP and files are GIF, neither of
                 // which Unity decodes. Giphy's CDN serves a JPG still for
                 // every id, so all giphy link shapes rewrite to that. A
