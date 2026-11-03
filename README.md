@@ -27,8 +27,8 @@ Admin command `kpadmin` (permission 0, runs on the server):
 
 - `kpadmin domains` / `domains add <site>` / `domains remove <site>` / `domains allowall` shows and edits the allowlist in game; changes persist to Settings.xml and apply immediately. Adding the first real site drops a lone `*` (that is what starting an allowlist means); URLs pasted as the site are reduced to their host.
 - `kpadmin wipe <x> <y> <z> [radius]` clears poster text at that spot or in a cube around it.
-- `kpadmin info <x> <y> <z>` shows a poster's text and its tiling group.
-- `kpadmin place / text / load` are testing helpers for driving posters from the server console.
+- `kpadmin info <x> <y> <z>` shows a poster's text, rotation, upright roll and tiling group.
+- `kpadmin place / text / load` are testing helpers for driving posters from the server console; `place` takes an optional rotation (0-27). The in-game rotation test is `docs/testing/rotation-and-flip.md`.
 
 ## Tiling
 
@@ -36,7 +36,11 @@ Adjacent posters (same block, same facing, same URL) forming a complete rectangl
 
 ## Rotation
 
-The frameless board gives no hint which way is up, and R on a model block cycles rotations 0-10: four upright facings, the same four upside down (4-7), two flat and one sideways. On a wall the DLL turns the text anchor (and so the image and any sign text) right side up about the board's normal, whatever rotation was used (`PosterSurface.UprightRoll`): rotations 4-7 get 180 degrees, sideways ones 90. Posters lying flat on a floor or ceiling keep the block's own orientation. Multi-block posters have simple rotations only and are always upright.
+The frameless board gives no hint which way is up, and R on a model block cycles rotations 0-10: four upright facings, the same four upside down (4-7), two flat and one sideways. On a wall the DLL turns the text anchor (and so the image and any sign text) right side up about the board's normal, whatever rotation was used (`PosterSurface.UprightRoll`): rotations 4-7 get 180 degrees, sideways ones 90. Posters lying flat on a floor or ceiling keep the block's own orientation. Multi-block posters get the full set too (the game rotates a multi-block's child blocks with it, as for vanilla's ~700 freely rotating multi-blocks); turned sideways, a portrait board hangs landscape and the image turns with it, so a 3:4 board shows a 4:3 image. Because of the uprighting, the upside-down variant of a facing looks exactly like the upright one, so rotation alone can't turn an image over; a 3:4 board has been reported upside down on a wall (cause not yet found).
+
+The escape hatch is the word `flip` after the URL (like `fit`), which turns the image 180 degrees on a single poster (ignored on a tiled cell, where it would scramble the mural). And the DLL compares the roll it worked out from the block's stored rotation against the model's actual rendered rotation; if they ever disagree it logs one `[KitsunePosters] ... renders needing ...` warning per poster with the block, rotation and both rolls, which is what to ask for in a bug report.
+
+![Three 3:4 posters with the same link: the left one has "flip" after the URL](docs/images/flip-3by4.png)
 
 ## Pickup
 
@@ -46,7 +50,7 @@ E > Take (1 s) puts a poster back in your inventory; its text is not kept. Vanil
 
 DLL mod: EAC off, and the mod goes on the server **and every client**. A client without the mod loaded can't join a server that has it: the settings window's `NetPackageKitsunePosters` is in the package list the server sends on connect, and a client that doesn't know a name in that list disconnects with "Unexpected data received. Server is either running an incompatible version or requires the client to install mods." (`auth_unknownnetpackage`, from `NetPackageManager.IdMappingsReceived`). The client log then has `[NET] Unknown package type NetPackageKitsunePosters`.
 
-When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.3.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
+When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.4.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
 
 ## Blocks
 
@@ -64,11 +68,11 @@ The graffiti blocks (paper + glue) are the decal variant, in the three block-siz
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: released (1.3.0)
+## Status: released (1.4.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 
-Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
+Link handling, in order: fragment strip, imgur `imgur.com/<id>` to the direct image, imgur direct links that are previews or undecodable (`i.imgur.com/<id>_d.webp`, `.gif`, `.gifv`, `.mp4`; query dropped) to `i.imgur.com/<id>.png`, the original served as PNG/JPG, giphy (page / media / file forms) to the CDN's JPG still, and for anything else that downloads as HTML, one hop through the page's `og:image` with the allowlist re-checked. GIF/WebP cannot decode (Unity limit): giphy gets a still; animation is a post-1.0 feature by choice.
 
 Found and fixed after the first settings-window playtest: the window's XML
 controller attribute lacked the namespace (`controller="KitsunePosters.KitsunePosterSettings, KitsunePosters"`
