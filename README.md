@@ -40,6 +40,8 @@ The frameless board gives no hint which way is up, and R on a model block cycles
 
 The escape hatch is the word `flip` after the URL (like `fit`), which turns the image 180 degrees on a single poster (ignored on a tiled cell, where it would scramble the mural). And the DLL compares the roll it worked out from the block's stored rotation against the model's actual rendered rotation; if they ever disagree it logs one `[KitsunePosters] ... renders needing ...` warning per poster with the block, rotation and both rolls, which is what to ask for in a bug report.
 
+![Three 3:4 posters with the same link: the left one has "flip" after the URL](docs/images/flip-3by4.png)
+
 ## Pickup
 
 E > Take (1 s) puts a poster back in your inventory; its text is not kept. Vanilla's `TEFeaturePickup` only allows that inside your own land claim (it was made for the combine station), so a postfix gives posters the usual pickup rule instead: anywhere you could place one (not another player's claim, not a trader), and a locked poster only for players allowed to edit it.
