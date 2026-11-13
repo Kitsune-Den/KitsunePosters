@@ -5,17 +5,18 @@
 	     This raises it for every sign, writable crates included. -->
 	<set xpath="//window[@name='windowSignEditMultiline']//textfield[@name='input1']/@character_limit">300</set>
 
-	<!-- The clickable settings window: image toggle for everyone, the site
-	     allowlist for admins. Opened from a poster's E menu or kposters menu. -->
+	<!-- The clickable settings window: image toggle for everyone, the shared
+	     pictures switch and the site allowlist for admins. Opened from a
+	     poster's E menu or kposters menu. -->
 	<append xpath="/windows">
-		<window name="windowKitsunePosterSettings" pos="400, 220" width="380" height="510" controller="KitsunePosters.KitsunePosterSettings, KitsunePosters" cursor_area="true">
+		<window name="windowKitsunePosterSettings" pos="400, 220" width="380" height="554" controller="KitsunePosters.KitsunePosterSettings, KitsunePosters" cursor_area="true">
 			<rect name="header" height="43" depth="1">
 				<headerbg />
 				<sprite depth="2" name="windowIcon" style="icon32px" pos="4,-5" sprite="ui_game_symbol_paint_brush"/>
 				<label style="header.name" text="POSTER SETTINGS" width="300" />
 			</rect>
-			<rect name="content" pos="0,-46" height="420" depth="1">
-				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" pos="0,0" width="380" height="420" color="[black]" type="sliced" fillcenter="false" />
+			<rect name="content" pos="0,-46" height="464" depth="1">
+				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" pos="0,0" width="380" height="464" color="[black]" type="sliced" fillcenter="false" />
 				<sprite color="[darkGrey]" type="sliced" />
 
 				<rect name="toggleRow" depth="3" pos="6,-6" height="38">
@@ -24,40 +25,46 @@
 					<label depth="4" name="toggleState" pos="290,-8" width="70" height="24" font_size="24" justify="right" text="[00E676]ON[-]"/>
 				</rect>
 
-				<label depth="4" pos="8,-54" width="364" height="18" font_size="18" color="140,140,140,255" text="SITE ALLOWLIST"/>
-				<label depth="4" name="status" pos="8,-78" width="364" height="22" font_size="22" color="200,200,200,255" text="Asking the server..."/>
+				<rect name="uploadsRow" depth="3" pos="6,-50" height="38">
+					<button name="btnUploads" sprite="menu_empty" width="368" height="38" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
+					<label depth="4" name="uploadsLabel" pos="12,-8" width="280" height="24" font_size="24" text="Players' own pictures"/>
+					<label depth="4" name="uploadsState" pos="290,-8" width="70" height="24" font_size="24" justify="right" text="[00E676]ON[-]"/>
+				</rect>
 
-				<label depth="4" name="row0" pos="16,-106" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row1" pos="16,-132" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row2" pos="16,-158" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row3" pos="16,-184" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row4" pos="16,-210" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row5" pos="16,-236" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row6" pos="16,-262" width="290" height="22" font_size="22" text=""/>
-				<label depth="4" name="row7" pos="16,-288" width="290" height="22" font_size="22" text=""/>
-				<rect depth="3" pos="326,-106"><button name="btnRemove0" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-132"><button name="btnRemove1" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-158"><button name="btnRemove2" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-184"><button name="btnRemove3" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-210"><button name="btnRemove4" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-236"><button name="btnRemove5" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-262"><button name="btnRemove6" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
-				<rect depth="3" pos="326,-288"><button name="btnRemove7" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<label depth="4" pos="8,-98" width="364" height="18" font_size="18" color="140,140,140,255" text="SITE ALLOWLIST"/>
+				<label depth="4" name="status" pos="8,-122" width="364" height="22" font_size="22" color="200,200,200,255" text="Asking the server..."/>
 
-				<textfield name="siteInput" pos="6,-316" width="254" height="34" font_size="24" character_limit="100" clear_button="true" virtual_keyboard_prompt="vkPromptSignText"/>
-				<rect depth="3" pos="266,-316" height="34">
+				<label depth="4" name="row0" pos="16,-150" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row1" pos="16,-176" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row2" pos="16,-202" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row3" pos="16,-228" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row4" pos="16,-254" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row5" pos="16,-280" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row6" pos="16,-306" width="290" height="22" font_size="22" text=""/>
+				<label depth="4" name="row7" pos="16,-332" width="290" height="22" font_size="22" text=""/>
+				<rect depth="3" pos="326,-150"><button name="btnRemove0" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-176"><button name="btnRemove1" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-202"><button name="btnRemove2" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-228"><button name="btnRemove3" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-254"><button name="btnRemove4" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-280"><button name="btnRemove5" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-306"><button name="btnRemove6" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+				<rect depth="3" pos="326,-332"><button name="btnRemove7" sprite="menu_empty" width="40" height="24" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/><label depth="4" pos="0,-1" width="40" height="22" justify="center" font_size="22" color="255,120,120,255" text="x"/></rect>
+
+				<textfield name="siteInput" pos="6,-360" width="254" height="34" font_size="24" character_limit="100" clear_button="true" virtual_keyboard_prompt="vkPromptSignText"/>
+				<rect depth="3" pos="266,-360" height="34">
 					<button name="btnAdd" sprite="menu_empty" width="108" height="34" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
 					<label depth="4" pos="0,-6" width="108" height="22" justify="center" font_size="22" text="Allow site"/>
 				</rect>
 
-				<rect depth="3" pos="6,-356" height="30">
+				<rect depth="3" pos="6,-400" height="30">
 					<button name="btnAllowAll" sprite="menu_empty" width="368" height="30" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced"/>
 					<label depth="4" pos="0,-4" width="368" height="22" justify="center" font_size="22" text="Allow every site"/>
 				</rect>
 
-				<label depth="4" name="hint" pos="8,-392" width="364" height="26" font_size="20" color="170,170,170,255" text=""/>
+				<label depth="4" name="hint" pos="8,-436" width="364" height="26" font_size="20" color="170,170,170,255" text=""/>
 			</rect>
-			<rect name="btnClose" depth="3" pos="0,-468" height="42">
+			<rect name="btnClose" depth="3" pos="0,-512" height="42">
 				<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
 				<sprite depth="2" name="background" pos="3,-3" sprite="menu_empty" width="374" height="36" color="[darkGrey]" type="sliced" />
 				<rect depth="3" pos="0,0" height="42">

@@ -8,13 +8,17 @@ namespace KitsunePosters
     {
         public override string[] getCommands() => new[] { "kpadmin" };
 
-        public override string getDescription() => "KitsunePosters admin: wipe poster URLs, inspect posters";
+        public override string getDescription() => "KitsunePosters admin: allowed sites, shared pictures, wipe and inspect posters";
 
         public override string getHelp() =>
             "kpadmin domains                    show which sites posters may load images from\n" +
             "kpadmin domains add <site>         allow a site (and its subdomains), e.g. imgur.com\n" +
             "kpadmin domains remove <site>      stop allowing a site\n" +
             "kpadmin domains allowall           allow every site (the default)\n" +
+            "kpadmin images                     pictures players shared: on or off, space used\n" +
+            "kpadmin images on|off              take players' own pictures, or stop taking new ones\n" +
+            "kpadmin images list                every shared picture: who, when, its name and hash\n" +
+            "kpadmin images remove <hash>       delete one for good, off every poster (the part after @)\n" +
             "kpadmin wipe <x> <y> <z> [radius]  clear the poster text there (and around, with a radius)\n" +
             "kpadmin info <x> <y> <z>           show a poster's text and its tiling group\n" +
             "kpadmin place <x> <y> <z> [block] [rotation 0-27]  put a poster block there (testing)\n" +
@@ -47,6 +51,9 @@ namespace KitsunePosters
                 case "domains" when _params.Count >= 2 && _params[1].ToLowerInvariant() == "allowall":
                     PosterSettings.AllowAll();
                     Out("Every site is allowed again.");
+                    return;
+                case "images":
+                    Images(_params);
                     return;
                 case "wipe" when _params.Count >= 4 && TryPos(_params, out Vector3i wipeAt):
                 {
@@ -131,7 +138,10 @@ namespace KitsunePosters
                         return;
                     }
                     string text = string.Join(" ", _params.GetRange(4, _params.Count - 4));
-                    signable.SetText(text);
+                    // Counts as the host's own edit: their image files get shared.
+                    PosterShare.LocalEdit = true;
+                    try { signable.SetText(text); }
+                    finally { PosterShare.LocalEdit = false; }
                     Out($"Text set. Now: '{signable.signText?.Text}'");
                     return;
                 }
@@ -143,6 +153,66 @@ namespace KitsunePosters
                     return;
                 default:
                     Out(getHelp());
+                    return;
+            }
+        }
+
+        private static void Images(List<string> _params)
+        {
+            string sub = _params.Count > 1 ? _params[1].ToLowerInvariant() : "";
+            switch (sub)
+            {
+                case "on":
+                case "off":
+                    PosterSettings.SetAllowUploads(sub == "on");
+                    PosterNet.RaiseChanged();
+                    Out(sub == "on"
+                        ? "Players can share pictures from their own PCs."
+                        : "New shared pictures are refused. The ones already here still show; kpadmin images remove <hash> takes one away.");
+                    return;
+                case "list":
+                {
+                    var entries = PosterShare.Entries();
+                    if (entries.Count == 0)
+                    {
+                        Out("Nobody has shared a picture in this world yet.");
+                        return;
+                    }
+                    foreach (var e in entries)
+                    {
+                        Out($"{e.Name}@{e.Hash}  {e.Bytes / 1024} KB  by {e.Who} ({e.WhoId})  {e.When} UTC");
+                    }
+                    return;
+                }
+                case "remove" when _params.Count >= 3:
+                {
+                    // Takes the hash, or the whole poster word ("cat.png@3f9a...").
+                    string hash = _params[2].ToLowerInvariant();
+                    int at = hash.LastIndexOf('@');
+                    if (at >= 0)
+                    {
+                        hash = hash.Substring(at + 1);
+                    }
+                    if (!PosterShare.IsHash(hash))
+                    {
+                        Out($"Not a picture's hash: {_params[2]}. It's the {PosterShare.HashLength} letters and digits after the @ (kpadmin images list).");
+                        return;
+                    }
+                    Out(PosterShare.StoreRemove(hash)
+                        ? $"Removed {hash}: deleted, taken off every poster, and refused if anyone shares it again."
+                        : $"{hash} wasn't stored here, but it's now refused if anyone shares it.");
+                    return;
+                }
+                case "":
+                {
+                    var entries = PosterShare.Entries();
+                    long used = PosterShare.StoreUsed();
+                    Out($"Players' own pictures: {(PosterSettings.AllowUploads ? "on" : "off")}.");
+                    Out($"{entries.Count} stored, {used / (1024 * 1024.0):0.#} MB of {PosterSettings.UploadSpaceMB} MB (UploadSpaceMB in Settings.xml).");
+                    return;
+                }
+                default:
+                    Out("kpadmin images [on|off|list|remove <hash>]");
                     return;
             }
         }

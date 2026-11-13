@@ -17,9 +17,23 @@ namespace KitsunePosters
 
         private static bool showRemoteImages = true;
         private static bool xmlShowDefault = true; // Settings.xml value, written back unchanged
+        private static bool allowUploads = true;
+        private static int uploadSpaceMB = 500;
         private static string modPath;
 
         public static bool ShowRemoteImages => showRemoteImages;
+
+        /// <summary>The server takes pictures players share from their own PCs.</summary>
+        public static bool AllowUploads => allowUploads;
+
+        /// <summary>Disk the server gives shared pictures, all together.</summary>
+        public static int UploadSpaceMB => uploadSpaceMB;
+
+        public static void SetAllowUploads(bool _on)
+        {
+            allowUploads = _on;
+            SaveSettingsXml();
+        }
 
         public static string DomainsSummary => string.Join(", ", AllowedDomains);
 
@@ -96,6 +110,12 @@ namespace KitsunePosters
                 sb.AppendLine("\t<!-- Default for THIS machine: download and show poster images at all.");
                 sb.AppendLine("\t     Players can change it in game any time with: kposters on|off -->");
                 sb.AppendLine($"\t<property name=\"ShowRemoteImages\" value=\"{(xmlShowDefault ? "true" : "false")}\"/>");
+                sb.AppendLine();
+                sb.AppendLine("\t<!-- SERVER: take pictures players share from their own PCs (a file name");
+                sb.AppendLine("\t     on a poster), kept with the world save and sent to everyone. Editable");
+                sb.AppendLine("\t     in game: kpadmin images on|off. UploadSpaceMB caps them all together. -->");
+                sb.AppendLine($"\t<property name=\"AllowUploads\" value=\"{(allowUploads ? "true" : "false")}\"/>");
+                sb.AppendLine($"\t<property name=\"UploadSpaceMB\" value=\"{uploadSpaceMB}\"/>");
                 sb.AppendLine("</kitsunePosters>");
                 File.WriteAllText(path, sb.ToString());
             }
@@ -110,7 +130,7 @@ namespace KitsunePosters
             modPath = _mod.Path;
             LoadSettingsXml();
             LoadClientPref();
-            Log.Out($"[KitsunePosters] AllowedDomains: {string.Join(", ", AllowedDomains)}; ShowRemoteImages: {showRemoteImages}");
+            Log.Out($"[KitsunePosters] AllowedDomains: {string.Join(", ", AllowedDomains)}; ShowRemoteImages: {showRemoteImages}; AllowUploads: {allowUploads} ({uploadSpaceMB} MB)");
         }
 
         public static void Reload()
@@ -149,6 +169,19 @@ namespace KitsunePosters
                 if (show != null)
                 {
                     showRemoteImages = !show.Trim().Equals("false", StringComparison.OrdinalIgnoreCase);
+                    xmlShowDefault = showRemoteImages;
+                }
+
+                var uploads = doc.SelectSingleNode("//property[@name='AllowUploads']")?.Attributes?["value"]?.Value;
+                if (uploads != null)
+                {
+                    allowUploads = !uploads.Trim().Equals("false", StringComparison.OrdinalIgnoreCase);
+                }
+
+                var space = doc.SelectSingleNode("//property[@name='UploadSpaceMB']")?.Attributes?["value"]?.Value;
+                if (space != null && int.TryParse(space.Trim(), out int mb) && mb >= 0)
+                {
+                    uploadSpaceMB = mb;
                 }
             }
             catch (Exception e)

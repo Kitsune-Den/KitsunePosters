@@ -12,12 +12,13 @@ namespace KitsunePosters
     public class NetPackageKitsunePosters : NetPackage
     {
         public enum Kind : byte { Ask, Set, Tell }
-        public enum Op : byte { Add, Remove, AllowAll }
+        public enum Op : byte { Add, Remove, AllowAll, UploadsOn, UploadsOff }
 
         private Kind kind;
         private Op op;
         private string text = "";
         private bool denied;
+        private bool uploads;
 
         public NetPackageKitsunePosters Setup(Kind _kind, Op _op, string _text, bool _denied = false)
         {
@@ -25,6 +26,7 @@ namespace KitsunePosters
             op = _op;
             text = _text ?? "";
             denied = _denied;
+            uploads = PosterSettings.AllowUploads; // only the server's copy is read
             return this;
         }
 
@@ -35,6 +37,7 @@ namespace KitsunePosters
             op = (Op)reader.ReadByte();
             text = reader.ReadString();
             denied = reader.ReadBoolean();
+            uploads = reader.ReadBoolean();
         }
 
         public override void write(PooledBinaryWriter _writer)
@@ -45,6 +48,7 @@ namespace KitsunePosters
             writer.Write((byte)op);
             writer.Write(text ?? "");
             writer.Write(denied);
+            writer.Write(uploads);
         }
 
         public override void ProcessPackage(World _world, GameManager _callbacks)
@@ -67,6 +71,11 @@ namespace KitsunePosters
                         case Op.Add: Log.Out($"[KitsunePosters] {Sender.playerName}: {PosterSettings.AddDomain(text)}"); break;
                         case Op.Remove: Log.Out($"[KitsunePosters] {Sender.playerName}: {PosterSettings.RemoveDomain(text)}"); break;
                         case Op.AllowAll: PosterSettings.AllowAll(); Log.Out($"[KitsunePosters] {Sender.playerName}: every site allowed."); break;
+                        case Op.UploadsOn:
+                        case Op.UploadsOff:
+                            PosterSettings.SetAllowUploads(op == Op.UploadsOn);
+                            Log.Out($"[KitsunePosters] {Sender.playerName}: shared images {(op == Op.UploadsOn ? "on" : "off")}.");
+                            break;
                     }
                     // Everyone's window (and local cache) learns the new list.
                     cm.SendPackage(NetPackageManager.GetPackage<NetPackageKitsunePosters>()
@@ -82,7 +91,7 @@ namespace KitsunePosters
             }
             if (kind == Kind.Tell)
             {
-                PosterNet.ReceiveTell(text, denied);
+                PosterNet.ReceiveTell(text, denied, uploads);
             }
         }
     }
@@ -92,6 +101,7 @@ namespace KitsunePosters
     {
         /// <summary>The server's list as last told to this client; null = not asked yet.</summary>
         public static string ServerDomains;
+        public static bool ServerUploads;
         public static bool LastDenied;
 
         public static event Action Changed;
@@ -112,6 +122,9 @@ namespace KitsunePosters
         }
 
         public static string CurrentCsv => Remote ? ServerDomains : LocalCsv();
+
+        /// <summary>Whether the server takes shared pictures (as last told, when it's someone else's).</summary>
+        public static bool CurrentUploads => Remote ? ServerUploads : PosterSettings.AllowUploads;
 
         public static void Ask()
         {
@@ -138,13 +151,16 @@ namespace KitsunePosters
                 case NetPackageKitsunePosters.Op.Add: PosterSettings.AddDomain(_domain); break;
                 case NetPackageKitsunePosters.Op.Remove: PosterSettings.RemoveDomain(_domain); break;
                 case NetPackageKitsunePosters.Op.AllowAll: PosterSettings.AllowAll(); break;
+                case NetPackageKitsunePosters.Op.UploadsOn: PosterSettings.SetAllowUploads(true); break;
+                case NetPackageKitsunePosters.Op.UploadsOff: PosterSettings.SetAllowUploads(false); break;
             }
             RaiseChanged();
         }
 
-        internal static void ReceiveTell(string _csv, bool _denied)
+        internal static void ReceiveTell(string _csv, bool _denied, bool _uploads)
         {
             ServerDomains = _csv;
+            ServerUploads = _uploads;
             LastDenied = _denied;
             RaiseChanged();
         }
