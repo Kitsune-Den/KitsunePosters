@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.0 (unreleased)
+## 1.5.0 (2026-11-13)
 
 - Posters can show image files from your own PC, no hosting needed. Drop a PNG or JPG into `%APPDATA%\7DaysToDie\KitsunePosters\Images`, then type its file name (`cat.png`) on a poster instead of a link. `fit`, `stretch`, `flip` and tiling work the same as with links. File names can't contain spaces.
 - Local files can be up to 40 MB, and a picture bigger than 4096px is scaled down to fit instead of being refused, so photos straight off a phone or camera work.
