@@ -17,6 +17,18 @@ Place a poster, press E, paste an image link. The poster downloads the image on 
 [*][b][color=#00BCD4]Cached.[/color][/b] Each image downloads once per machine, ever. Chunk reloads come from disk.
 [/list]
 
+[size=5][color=#FF8C1A]Use pictures from your own PC[/color][/size]
+
+No hosting needed. Put a PNG or JPG in [i]%APPDATA%\7DaysToDie\KitsunePosters\Images[/i] (type [i]kposters images[/i] in the console to see the exact folder and what's in it), then type the file name on a poster instead of a link: [i]cat.png[/i]. No spaces in the name. [i]fit[/i], [i]stretch[/i] and poster walls work the same. Added a file while the game is running? [i]kposters reload[/i].
+
+Big photos are fine: files up to 40 MB, and anything over 4096px is scaled down for you.
+
+Playing on a server? Everyone sees it. When you save the poster your game sends the picture to the server, the server keeps it with the world, and every other player gets it once when they walk up to it. The text on the poster changes to something like [i]cat.png@3f9a0c12be47[/i]. That code is the picture's fingerprint, so editing or deleting your file later doesn't touch posters you already put up.
+
+Big pictures get shrunk to 2048px before they're sent, so a 30 MB phone photo turns into a few hundred KB and nobody sits waiting on it.
+
+Want pictures everyone has from the start? A server mod pack can include them in an [i]Images[/i] folder inside the mod folder.
+
 [size=5][color=#FF8C1A]Where to host your images[/color][/size]
 
 Any site that gives you a direct image link works. These are good ones:
@@ -35,6 +47,7 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 
 [list]
 [*][b]A settings window, no files, no console[/b]: press E on any poster and pick "Poster settings". Admins see the site allowlist and change it with buttons; changes save and apply at once, for remote admins too. The console works as well ([i]kpadmin domains add imgur.com[/i], [i]remove[/i], [i]allowall[/i]), and so does Settings.xml. A blocked URL is rewritten to "blocked: domain" in the sign text itself, server side, before it ever syncs.
+[*][b]Players' own pictures[/b]: on by default. Turn sharing off with the "Players' own pictures" switch in the settings window or [i]kpadmin images off[/i] (pictures already up stay up). [i]kpadmin images list[/i] shows every shared picture and who shared it; [i]kpadmin images remove <code>[/i] deletes one, takes it off every poster and blocks it from coming back. They're kept with the world save and capped at 500 MB all together ([i]UploadSpaceMB[/i] in Settings.xml).
 [*][b]kpadmin wipe <x> <y> <z>[/b] (optional radius): clear any poster's link from the console, with an area option for cleaning up after someone.
 [*][b]Hard caps[/b] baked in: 5 MB per image, 4096px max, 15 second timeout, PNG/JPG only.
 [*]Images are fetched by each client directly, so the site hosting an image sees the IP of each player whose game loads it, the same as clicking a link. Server owners never see anyone's IP from a poster. The risk is a player linking to a server they run and reading its logs; locking the allowlist to known image hosts (say, imgur.com) shuts that down.
@@ -43,7 +56,7 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 [size=5][color=#FF8C1A]For players[/color][/size]
 
 [list]
-[*][i]kposters off[/i] hides all poster images on YOUR machine (saved across sessions); [i]kposters on[/i] brings them back. Instant, no reload.
+[*][i]kposters off[/i] hides all poster images on YOUR machine (saved across sessions), including pictures other players shared; [i]kposters on[/i] brings them back. Instant, no reload.
 [*]Clear a poster's text to get a blank board back.
 [/list]
 
@@ -51,7 +64,7 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 
 DLL mod: [b][color=#FF5252]EAC off[/color][/b], and the mod goes on the [b]server and every client[/b]. Single player works too.
 
-The folder should be [i]Mods/KitsunePosters/ModInfo.xml[/i]. Unzipping can add an extra folder ([i]Mods/KitsunePosters-1.4.0/KitsunePosters/...[/i]), and the game silently skips the mod when it's nested like that.
+The folder should be [i]Mods/KitsunePosters/ModInfo.xml[/i]. Unzipping can add an extra folder ([i]Mods/KitsunePosters-1.5.0/KitsunePosters/...[/i]), and the game silently skips the mod when it's nested like that.
 
 [b]Can't join a friend?[/b] "Unexpected data received. Server is either running an incompatible version or requires the client to install mods" means the mod isn't running on the joining PC, even if it's in the Mods folder. Check that EAC is off and the folder is right on both machines. Your newest log in [i]%APPDATA%\7DaysToDie\logs[/i] ([i]output_log_client...[/i]) has [MODS] lines near the top that say whether KitsunePosters loaded.
 

@@ -9,4 +9,10 @@
 	<!-- Default for THIS machine: download and show poster images at all.
 	     Players can change it in game any time with: kposters on|off -->
 	<property name="ShowRemoteImages" value="true"/>
+
+	<!-- SERVER: take pictures players share from their own PCs (a file name
+	     on a poster), kept with the world save and sent to everyone. Editable
+	     in game: kpadmin images on|off. UploadSpaceMB caps them all together. -->
+	<property name="AllowUploads" value="true"/>
+	<property name="UploadSpaceMB" value="500"/>
 </kitsunePosters>

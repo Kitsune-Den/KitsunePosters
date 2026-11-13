@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 (2026-11-13)
+
+- Posters can show image files from your own PC, no hosting needed. Drop a PNG or JPG into `%APPDATA%\7DaysToDie\KitsunePosters\Images`, then type its file name (`cat.png`) on a poster instead of a link. `fit`, `stretch`, `flip` and tiling work the same as with links. File names can't contain spaces.
+- Local files can be up to 40 MB, and a picture bigger than 4096px is scaled down to fit instead of being refused, so photos straight off a phone or camera work.
+- `kposters images` shows the folder and lists the files in it. `kposters reload` now also picks up files you added or replaced while the game was running.
+- In multiplayer the picture is shared. Put a file name on a poster and your game sends the picture to the server, which keeps it with the world save and hands it to every other player when they come near the poster. The sign text becomes `cat.png@` plus a short code that names that exact picture, so replacing your file later doesn't change posters you already made. A big picture is shrunk to 2048px before it's sent.
+- Server admins decide whether players can share pictures: the new "Players' own pictures" switch in the Poster settings window, or `kpadmin images on|off`. `kpadmin images list` shows every shared picture with who shared it and when, and `kpadmin images remove <code>` deletes one, takes it off every poster, and refuses it if anyone tries again. `UploadSpaceMB` in Settings.xml caps the space they take (500 MB by default).
+- A server pack can still ship pictures for everyone in an `Images` folder inside the mod folder. Those stay plain file names, since every player already has them.
+
 ## 1.4.0 (2026-11-03)
 
 - Add the word "flip" after a poster's link to turn its image upside down. It's for the 3:4 poster that was reported showing its image upside down on a wall: the uprighting makes every rotation of a poster on that wall look the same, so rotating it again couldn't put it right. "flip" works on any poster that isn't part of a tiled mural.

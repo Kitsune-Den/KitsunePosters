@@ -17,7 +17,8 @@ namespace KitsunePosters
             "kposters menu         open the settings window\n" +
             "kposters              show the current settings\n" +
             "kposters on|off       show or hide poster images on THIS machine (saved)\n" +
-            "kposters reload       re-read Settings.xml (allowlist)\n" +
+            "kposters reload       re-read Settings.xml (allowlist) and your image files\n" +
+            "kposters images       show your images folder and the files in it\n" +
             "kposters allow <url>  say whether the allowlist passes that URL";
 
         public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
@@ -37,8 +38,20 @@ namespace KitsunePosters
                 case "reload":
                     PosterSettings.Reload();
                     PosterTextureManager.ClearFailures(); // failed URLs get another try
+                    PosterTextureManager.ClearLocal();    // files added or replaced on disk
                     PosterRegistry.Reapply();
                     Out($"Settings reloaded. AllowedDomains: {string.Join(", ", PosterSettings.AllowedDomains)}");
+                    return;
+                case "images":
+                    Out($"Your images folder: {PosterLocal.UserImagesDir()}");
+                    var names = PosterLocal.List();
+                    Out(names.Count == 0
+                        ? "No PNG or JPG files there yet. Drop one in, then type its file name on a poster."
+                        : $"{names.Count} image(s): {string.Join(", ", names)}");
+                    Out("After adding or replacing files: kposters reload");
+                    Out(PosterNet.Remote
+                        ? "Type one on a poster and it's shared: the server keeps a copy, so everyone sees it."
+                        : "Type one on a poster and it's shared with anyone who plays in this world.");
                     return;
                 case "allow" when _params.Count >= 2:
                     Out(PosterSettings.IsDomainAllowed(_params[1])

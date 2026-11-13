@@ -8,6 +8,8 @@ namespace KitsunePosters
         public void InitMod(Mod _modInstance)
         {
             PosterSettings.Load(_modInstance);
+            PosterLocal.Init(_modInstance);
+            ModEvents.PlayerSpawnedInWorld.RegisterHandler(PosterShare.OnPlayerSpawned); // removals reach players who were away
 
             var harmony = new Harmony("net.kitsuneden.posters");
 
@@ -33,6 +35,19 @@ namespace KitsunePosters
             else
             {
                 Log.Warning("[KitsunePosters] SetText overload not found - allowlist runs client side only.");
+            }
+            // The sign window's save: the moment a bare file name from the
+            // player's own folder gets shared (see PosterShare).
+            var signClose = AccessTools.Method(typeof(XUiC_SignWindow), nameof(XUiC_SignWindow.OnClose));
+            if (signClose != null)
+            {
+                harmony.Patch(signClose,
+                    prefix: new HarmonyMethod(typeof(SignWindowPatch), nameof(SignWindowPatch.Prefix)),
+                    finalizer: new HarmonyMethod(typeof(SignWindowPatch), nameof(SignWindowPatch.Finalizer)));
+            }
+            else
+            {
+                Log.Warning("[KitsunePosters] XUiC_SignWindow.OnClose not found - image files show on this PC only.");
             }
             // The E menu's "Poster settings" entry on poster blocks.
             var initCommands = AccessTools.Method(typeof(TEFeatureSignable), nameof(TEFeatureSignable.InitBlockActivationCommands));
@@ -60,7 +75,7 @@ namespace KitsunePosters
             {
                 UnityEngine.Font.textureRebuilt += PosterSurface.OnFontRebuilt;
             }
-            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, E-menu commands, pickup).");
+            Log.Out("[KitsunePosters] Patched (RefreshTextMesh postfix, SetText prefix, sign window, E-menu commands, pickup).");
         }
     }
 
@@ -138,17 +153,44 @@ namespace KitsunePosters
         }
     }
 
-    /// <summary>On the authoritative side, a disallowed URL never even enters the sign text.</summary>
+    /// <summary>Marks the sign window's save as this player's own edit.</summary>
+    public static class SignWindowPatch
+    {
+        public static void Prefix()
+        {
+            PosterShare.LocalEdit = true;
+        }
+
+        public static System.Exception Finalizer(System.Exception __exception)
+        {
+            PosterShare.LocalEdit = false;
+            return __exception;
+        }
+    }
+
+    /// <summary>
+    /// The player's own edit shares the image files it names; on the
+    /// authoritative side, a disallowed URL never even enters the sign text.
+    /// </summary>
     public static class SignSetTextPatch
     {
-        public static void Prefix(TEFeatureSignable __instance, ref string _text)
+        public static void Prefix(TEFeatureSignable __instance, ref string _text, bool _syncData)
         {
-            if (string.IsNullOrEmpty(_text) || !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
+            if (string.IsNullOrEmpty(_text))
             {
                 return;
             }
             string blockName = __instance.Parent?.TeData?.Block?.GetBlockName();
             if (!PosterBlocks.IsPoster(blockName))
+            {
+                return;
+            }
+            if (PosterShare.LocalEdit && _syncData && !GameManager.IsDedicatedServer)
+            {
+                try { _text = PosterShare.Stamp(_text); }
+                catch (Exception e) { Log.Warning($"[KitsunePosters] Sharing the poster's image failed: {e}"); }
+            }
+            if (!SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
             {
                 return;
             }
@@ -199,7 +241,11 @@ namespace KitsunePosters
             // The raw text, not the filtered display text: the profanity filter
             // may touch the display copy, but the URL lives in the authored text.
             string url = PosterUrl.Extract(__instance.signText?.Text);
-            if (url == null || !PosterSettings.ShowRemoteImages || !PosterSettings.IsDomainAllowed(url))
+            // Local file names skip the domain allowlist: they only ever show
+            // what is already on the player's own disk. Shared pictures come
+            // from the server itself, which has its own switch for them.
+            if (url == null || !PosterSettings.ShowRemoteImages
+                || !(PosterLocal.IsLocal(url) || PosterLocal.IsShared(url) || PosterSettings.IsDomainAllowed(url)))
             {
                 PosterSurface.Clear(meshes);
                 NudgeOthers(world, pos, PosterTiling.Single);
@@ -244,9 +290,12 @@ namespace KitsunePosters
             {
                 if (tex == null)
                 {
-                    // Download/decode failed: show the text again so the player
-                    // can see (and fix) the URL they typed.
-                    PosterSurface.ShowText(meshes);
+                    // Download/decode failed, or an admin removed a shared
+                    // picture that was showing: back to the plain board with
+                    // its text, so the player can see (and fix) what's typed.
+                    // Clear, not just ShowText: a picture taken away leaves a
+                    // quad whose texture is gone, which draws black over it.
+                    PosterSurface.Clear(meshes);
                     return;
                 }
                 PosterSurface.Apply(meshes, tex, faceW, faceH, layout, mode, roll, graffiti);
@@ -357,7 +406,7 @@ namespace KitsunePosters
             return false;
         }
 
-        /// <summary>First http(s) token in the sign text, or null.</summary>
+        /// <summary>First http(s) link or local image file name in the sign text, or null.</summary>
         public static string Extract(string _text)
         {
             if (string.IsNullOrEmpty(_text))
@@ -369,6 +418,13 @@ namespace KitsunePosters
                 if (token.StartsWith("http://") || token.StartsWith("https://"))
                 {
                     return Normalize(token.Trim());
+                }
+                // A bare image file name ("cat.png"): a file in the player's
+                // own Images folder, keyed "local:cat.png".
+                string local = PosterLocal.KeyFromToken(token);
+                if (local != null)
+                {
+                    return local;
                 }
             }
             return null;

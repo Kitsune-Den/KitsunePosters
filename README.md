@@ -10,22 +10,47 @@ The poster block is a sign under the hood (`TEFeatureSignable`), so the URL ride
 - Caps: 5 MB per image, 4096px max dimension, 15 s timeout, PNG/JPG only. Failures show the sign text again so the URL can be fixed, and the URL is not retried that session.
 - Dedicated servers skip the rendering (no renderer there); the server syncs sign text like always and enforces the allowlist.
 
+## Local image files
+
+A sign text token that is a bare image file name (`cat.png`, also `local:cat.png` or `file:cat.png`; PNG/JPG, no spaces) names a file on the player's own machine instead of a URL (`PosterLocal`). It is looked up, ignoring case, in `<user game data>/KitsunePosters/Images/` first (created at startup, survives mod updates), then in `Images/` inside the mod folder, so a server pack can ship pictures with the mod. Paths are refused outright (no separators, no `..`, no drive letters), so a sign can never name a file outside those two folders.
+
+- Internally the key is `local:<lower-case name>`, which is what tiling compares, so local posters tile like linked ones.
+- In multiplayer the picture travels with the poster: see [Shared pictures](#shared-pictures). Files in the mod's own `Images/` (a server pack) stay bare names, since every client already has them.
+- Local names skip the domain allowlist (they only show what is already on that player's disk) but obey the `kposters off` toggle.
+- No disk cache (the file is the cache). Caps: 40 MB, and anything over 4096px is scaled down through a RenderTexture instead of refused.
+- `kposters images` prints the folder and its files; `kposters reload` drops loaded local textures so replaced files show.
+
+## Shared pictures
+
+When a player saves a poster with a file from their own folder on it, the sign text is rewritten before it syncs: `cat.png` becomes `cat.png@3f9a0c12be47` (`PosterShare`, from a Harmony prefix on `TEFeatureSignable.SetText` that only fires for the local player's own sign-window edit). The suffix is the first 12 hex digits of the SHA-256 of the prepared bytes, so the token names one exact picture.
+
+- **Preparing.** The client scales the image to 2048px max (1024px if the result is still over 4 MB) and re-encodes it: JPG at quality 90, or PNG when it has transparency.
+- **Upload.** `NetPackageKitsunePosterImage` carries Offer / Need / Get / Chunk / Missing / Ready / Revoke. The client offers the hash and size; the server answers Need, or Missing with a reason (uploads off, removed, too big, out of space, more than 4 in flight from that player), and the client sends 16 KB chunks paced at about 640 KB/s so the game's own traffic isn't starved. The server only accepts chunks it asked for and drops the result unless it's a PNG/JPG whose hash matches, so nobody can slip a different picture in under someone else's code.
+- **Storage.** The server keeps `<save game dir>/KitsunePosters/<hash>.img` plus `index.txt` (who, when, the shown name) and `removed.txt`. It moves and backs up with the world.
+- **Download.** A client that meets a `name@hash` poster checks its cache (`<user game data>/KitsunePosters/Shared/<hash>.img`), then sends Get. The server streams the chunks, or parks the request if that picture is still uploading and sends it when it lands. Every client checks the hash again before using it. Once cached, a picture never downloads again on that machine.
+- **Listen host.** On a host-and-play game the host's own posters go straight into the store; there's no upload.
+- **Removal.** `kpadmin images remove <hash>` deletes the file, adds the hash to `removed.txt` and broadcasts Revoke: every client drops its cached copy and those posters fall back to showing their text. Players who were away get a Revoke for every removed hash when they spawn in (`ModEvents.PlayerSpawnedInWorld`), so an old cached copy can't bring it back.
+- A client on an older version sees `cat.png@3f9a0c12be47` as text, the same way a missing file shows its name.
+
 ## Settings and commands
 
 `Settings.xml` in the mod folder:
 
 - `AllowedDomains`: comma-separated hosts posters may load from; `*` (the default) allows everything. An entry matches the host and its subdomains (`imgur.com` also allows `i.imgur.com`, but not `fakeimgur.com` or `imgur.com.evil.net`). The server's copy is authoritative: a disallowed URL is rewritten to `[blocked: <host>]` in the sign text itself before it ever syncs, and clients independently refuse to render URLs their own copy disallows (second gate, since the SetText patch rides a virtual method).
 - `ShowRemoteImages`: per-machine default for whether poster images render at all.
+- `AllowUploads` (server): take pictures players share from their own PCs, `true` by default. Off refuses new ones; pictures already stored keep showing.
+- `UploadSpaceMB` (server): disk space for all shared pictures together, 500 by default.
 
 Console command `kposters` (every player, runs on their own client):
 
 - `kposters` shows the current settings, `kposters on|off` toggles images on this machine (saved, applies to loaded posters at once), `kposters reload` re-reads Settings.xml, `kposters allow <url>` tests the allowlist.
 
-**Settings window** (for people who do not live in consoles): press E on any poster and pick "Poster settings", or type `kposters menu`. Everyone gets the poster-images on/off toggle for their own machine; the site allowlist shows for everyone and saves only for admins (the server checks permission level 0 on every change and the window says so otherwise). On a dedicated server the window talks to the server through a small Ask/Set/Tell package, so remote admins manage the list in game.
+**Settings window** (for people who do not live in consoles): press E on any poster and pick "Poster settings", or type `kposters menu`. Everyone gets the poster-images on/off toggle for their own machine; the site allowlist and the "Players' own pictures" switch show for everyone and save only for admins (the server checks permission level 0 on every change and the window says so otherwise). On a dedicated server the window talks to the server through a small Ask/Set/Tell package, so remote admins manage the list in game.
 
 Admin command `kpadmin` (permission 0, runs on the server):
 
 - `kpadmin domains` / `domains add <site>` / `domains remove <site>` / `domains allowall` shows and edits the allowlist in game; changes persist to Settings.xml and apply immediately. Adding the first real site drops a lone `*` (that is what starting an allowlist means); URLs pasted as the site are reduced to their host.
+- `kpadmin images` shows whether sharing is on and the space used; `images on|off` flips it (saved to Settings.xml); `images list` prints every shared picture as `name@hash` with its size, who shared it (name and Steam or other platform ID, the one `admin add` and `ban` take) and when; `images remove <hash>` (or the whole `name@hash` word) deletes one for good.
 - `kpadmin wipe <x> <y> <z> [radius]` clears poster text at that spot or in a cube around it.
 - `kpadmin info <x> <y> <z>` shows a poster's text, rotation, upright roll and tiling group.
 - `kpadmin place / text / load` are testing helpers for driving posters from the server console; `place` takes an optional rotation (0-27). The in-game rotation test is `docs/testing/rotation-and-flip.md`.
@@ -50,7 +75,7 @@ E > Take (1 s) puts a poster back in your inventory; its text is not kept. Vanil
 
 DLL mod: EAC off, and the mod goes on the server **and every client**. A client without the mod loaded can't join a server that has it: the settings window's `NetPackageKitsunePosters` is in the package list the server sends on connect, and a client that doesn't know a name in that list disconnects with "Unexpected data received. Server is either running an incompatible version or requires the client to install mods." (`auth_unknownnetpackage`, from `NetPackageManager.IdMappingsReceived`). The client log then has `[NET] Unknown package type NetPackageKitsunePosters`.
 
-When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.4.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
+When both players swear they have it installed, the mod usually isn't loading on the joining PC. The game won't load a mod with code while EAC is on, and it only looks one folder deep: unzipping can produce `Mods/KitsunePosters-1.5.0/KitsunePosters/ModInfo.xml`, which it skips with nothing but a `[MODS]` warning. The `[MODS]` lines at the top of the client log say whether KitsunePosters loaded.
 
 ## Blocks
 
@@ -68,7 +93,7 @@ The graffiti blocks (paper + glue) are the decal variant, in the three block-siz
 
 The bundle lands in `KitsunePosters/Resources/KitsunePosters.unity3d`; blocks reference it as `#@modfolder:Resources/KitsunePosters.unity3d?poster_1x1`. The game puts the prefab pivot at the block volume's centre (multi-block: the whole volume's centre), so prefabs are modelled centred. If the board hangs on the wrong face in game, flip `BoardSide` in `BuildPosters.cs`.
 
-## Status: released (1.4.0)
+## Status: released (1.5.0)
 
 Confirmed in game (2026-10-26 playtest): board renders frameless and faces the player, E/focus works (collider root tagged `T_Block`), images download, fill the board (centre crop) and shade with world lighting, imgur page/gallery/album links and giphy links resolve, long URLs fit the edit window.
 

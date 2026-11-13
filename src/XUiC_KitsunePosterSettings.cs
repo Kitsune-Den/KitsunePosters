@@ -4,9 +4,9 @@ namespace KitsunePosters
 {
     /// <summary>
     /// The clickable settings window: a per-machine image toggle for every
-    /// player, and the server's site allowlist with add/remove buttons for
-    /// admins (the server refuses edits from anyone else and the window says
-    /// so). Opened from a poster's E menu or with `kposters menu`.
+    /// player, and for admins the server's shared-pictures switch and its
+    /// site allowlist with add/remove buttons (the server refuses edits from
+    /// anyone else and the window says so). Opened from a poster's E menu or with `kposters menu`.
     /// </summary>
     public class XUiC_KitsunePosterSettings : XUiController
     {
@@ -18,6 +18,8 @@ namespace KitsunePosters
         private XUiV_Label hint;
         private XUiV_Label toggleLabel;
         private XUiV_Label toggleState;
+        private XUiV_Label uploadsLabel;
+        private XUiV_Label uploadsState;
         private readonly XUiV_Label[] rows = new XUiV_Label[RowCount];
         private readonly string[] shown = new string[RowCount];
 
@@ -29,8 +31,13 @@ namespace KitsunePosters
             hint = (XUiV_Label)GetChildById("hint").ViewComponent;
             toggleLabel = (XUiV_Label)GetChildById("toggleLabel").ViewComponent;
             toggleState = (XUiV_Label)GetChildById("toggleState").ViewComponent;
+            uploadsLabel = GetChildById("uploadsLabel")?.ViewComponent as XUiV_Label;
+            uploadsState = GetChildById("uploadsState")?.ViewComponent as XUiV_Label;
 
             Wire("btnToggle", ToggleImages);
+            Wire("btnUploads", () => PosterNet.Send(PosterNet.CurrentUploads
+                ? NetPackageKitsunePosters.Op.UploadsOff
+                : NetPackageKitsunePosters.Op.UploadsOn, ""));
             Wire("btnAdd", AddSite);
             Wire("btnAllowAll", () => PosterNet.Send(NetPackageKitsunePosters.Op.AllowAll, ""));
             Wire("btnCloseSettings", () => xui.playerUI.windowManager.Close(GroupName));
@@ -99,6 +106,13 @@ namespace KitsunePosters
         {
             toggleLabel.Text = "Show poster images on this PC";
             toggleState.Text = PosterSettings.ShowRemoteImages ? "[00E676]ON[-]" : "[FF5252]OFF[-]";
+            if (uploadsLabel != null && uploadsState != null)
+            {
+                uploadsLabel.Text = "Players' own pictures";
+                uploadsState.Text = PosterNet.Remote && PosterNet.ServerDomains == null
+                    ? "..."
+                    : PosterNet.CurrentUploads ? "[00E676]ON[-]" : "[FF5252]OFF[-]";
+            }
 
             string csv = PosterNet.CurrentCsv;
             var domains = new List<string>();
@@ -144,7 +158,7 @@ namespace KitsunePosters
 
             if (PosterNet.LastDenied)
             {
-                hint.Text = "Only server admins can change the site list.";
+                hint.Text = "Only server admins can change these.";
                 PosterNet.LastDenied = false;
             }
             else if (domains.Count > RowCount)
