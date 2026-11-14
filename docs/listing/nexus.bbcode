@@ -1,16 +1,17 @@
 [center][size=6][color=#FF8C1A]Kitsune Posters[/color][/size]
 
-[size=4][b]Hang any image from the internet on your wall. No image packs, no cap, no server setup.[/b][/size][/center]
+[size=4][b]Hang any image on your wall, from a link or straight from your PC. No image packs, no cap, no server setup.[/b][/size][/center]
 
 [line]
 
-Place a poster, press E, paste an image link. The poster downloads the image on each player's machine and shows it, lit like any painting. Every player on a server decorates with their own pictures, the server owner installs nothing but the mod, and there is no limit on how many different images a world can hold.
+Place a poster, press E, paste an image link or type the name of a picture on your PC. The poster shows it, lit like any painting. Every player on a server decorates with their own pictures, the server owner installs nothing but the mod, and there is no limit on how many different images a world can hold.
 
 [size=5][color=#FF8C1A]What you get[/color][/size]
 
 [list]
 [*][b][color=#00BCD4]Eight frameless poster boards[/color][/b]: 1x1, 2x2 and 3x2 blocks, plus movie-poster shapes: 2:3 in three sizes (0.5 x 0.75 m, 1 x 1.5 m and 2 x 3 m), 3:4 and 9:16. Craftable from wood and paper, placeable on any wall. A thin dark rim of board shows round the image.
 [*][b][color=#E91E63]Graffiti in three sizes too[/color][/b]: decal blocks with no board at all, 1x1, 2x2 and 3x2. Paste a link to a transparent PNG and the art sits straight on the wall, transparency kept, like spray paint. The faint placement ghost disappears once the image loads.
+[*][b][color=#00BCD4]Your own pictures.[/color][/b] Drop a PNG or JPG in a folder and type its name on a poster. On a server everyone sees it, no hosting needed. See below.
 [*][b][color=#00BCD4]Paste almost any link.[/color][/b] Direct PNG/JPG links work, and so do the links people actually copy: imgur pages, galleries and albums resolve to their image automatically, giphy links show the GIF's still frame, and other pages are resolved through their preview image. Fragments, crop suffixes and other link noise are handled.
 [*][b][color=#00BCD4]Fill, fit or stretch.[/color][/b] The image fills the board by default (centre cropped like a printed poster). Type [i]fit[/i] after the link to show the whole image with nothing cut off (handy for graffiti), or [i]stretch[/i] to squash it to the board's shape.
 [*][b][color=#E91E63]Poster walls.[/color][/b] 1x1 posters with the same link, forming a complete rectangle of any size, merge into ONE image spread seamlessly across the whole wall: 2x1, 4x3, 8x8, up to 64 posters. Different links stay separate pictures, and a gap or an L shape means each poster shows the whole image on its own. Works for 1x1 graffiti too.
@@ -19,11 +20,20 @@ Place a poster, press E, paste an image link. The poster downloads the image on 
 
 [size=5][color=#FF8C1A]Use pictures from your own PC[/color][/size]
 
-No hosting needed. Put a PNG or JPG in [i]%APPDATA%\7DaysToDie\KitsunePosters\Images[/i] (type [i]kposters images[/i] in the console to see the exact folder and what's in it), then type the file name on a poster instead of a link: [i]cat.png[/i]. No spaces in the name. [i]fit[/i], [i]stretch[/i] and poster walls work the same. Added a file while the game is running? [i]kposters reload[/i].
+No hosting needed. You need version 1.5.0 or newer.
+
+[list=1]
+[*]Start the game once with the mod installed. That creates the folder.
+[*]Open File Explorer, paste [i]%APPDATA%\7DaysToDie\KitsunePosters\Images[/i] into the address bar and press Enter.
+[*]Drop your PNGs or JPGs in there. No spaces in the file names: [i]my-cat.png[/i], not [i]my cat.png[/i].
+[*]Press E on a poster and type the file name where you'd normally paste a link: [i]my-cat.png[/i]. [i]fit[/i], [i]stretch[/i] and poster walls work the same as with links.
+[/list]
+
+Added a file while the game is running? Open the console (F1) and type [i]kposters reload[/i]. Picture not showing up? [i]kposters images[/i] shows the exact folder and every file the mod can see in it.
 
 Big photos are fine: files up to 40 MB, and anything over 4096px is scaled down for you.
 
-Playing on a server? Everyone sees it. When you save the poster your game sends the picture to the server, the server keeps it with the world, and every other player gets it once when they walk up to it. The text on the poster changes to something like [i]cat.png@3f9a0c12be47[/i]. That code is the picture's fingerprint, so editing or deleting your file later doesn't touch posters you already put up.
+Playing on a server? Everyone sees it. When you save the poster your game sends the picture to the server, the server keeps it with the world, and every other player gets it once when they walk up to it. The text on the poster changes to something like [i]my-cat.png@3f9a0c12be47[/i]. That code is the picture's fingerprint, so editing or deleting your file later doesn't touch posters you already put up.
 
 Big pictures get shrunk to 2048px before they're sent, so a 30 MB phone photo turns into a few hundred KB and nobody sits waiting on it.
 
@@ -31,7 +41,7 @@ Want pictures everyone has from the start? A server mod pack can include them in
 
 [size=5][color=#FF8C1A]Where to host your images[/color][/size]
 
-Any site that gives you a direct image link works. These are good ones:
+Prefer links? Any site that gives you a direct image link works. These are good ones:
 
 [list]
 [*][b]Imgur[/b]: page, gallery and album links all work as copied.
@@ -49,8 +59,8 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 [*][b]A settings window, no files, no console[/b]: press E on any poster and pick "Poster settings". Admins see the site allowlist and change it with buttons; changes save and apply at once, for remote admins too. The console works as well ([i]kpadmin domains add imgur.com[/i], [i]remove[/i], [i]allowall[/i]), and so does Settings.xml. A blocked URL is rewritten to "blocked: domain" in the sign text itself, server side, before it ever syncs.
 [*][b]Players' own pictures[/b]: on by default. Turn sharing off with the "Players' own pictures" switch in the settings window or [i]kpadmin images off[/i] (pictures already up stay up). [i]kpadmin images list[/i] shows every shared picture and who shared it; [i]kpadmin images remove <code>[/i] deletes one, takes it off every poster and blocks it from coming back. They're kept with the world save and capped at 500 MB all together ([i]UploadSpaceMB[/i] in Settings.xml).
 [*][b]kpadmin wipe <x> <y> <z>[/b] (optional radius): clear any poster's link from the console, with an area option for cleaning up after someone.
-[*][b]Hard caps[/b] baked in: 5 MB per image, 4096px max, 15 second timeout, PNG/JPG only.
-[*]Images are fetched by each client directly, so the site hosting an image sees the IP of each player whose game loads it, the same as clicking a link. Server owners never see anyone's IP from a poster. The risk is a player linking to a server they run and reading its logs; locking the allowlist to known image hosts (say, imgur.com) shuts that down.
+[*][b]Hard caps[/b] on links, baked in: 5 MB per image, 4096px max, 15 second timeout, PNG/JPG only.
+[*]Images are fetched by each client directly, so the site hosting an image sees the IP of each player whose game loads it, the same as clicking a link. Server owners never see anyone's IP from a poster. The risk is a player linking to a server they run and reading its logs; locking the allowlist to known image hosts (say, imgur.com) shuts that down. Pictures shared from players' PCs go through your server, so they don't expose anyone's IP.
 [/list]
 
 [size=5][color=#FF8C1A]For players[/color][/size]
@@ -63,6 +73,8 @@ Rule of thumb: if the link opens just the picture, it works. If a server limits 
 [size=5][color=#FF8C1A]Install[/color][/size]
 
 DLL mod: [b][color=#FF5252]EAC off[/color][/b], and the mod goes on the [b]server and every client[/b]. Single player works too.
+
+Everyone needs the same version. A player still on 1.4.0 sees a shared picture as text ([i]my-cat.png@3f9a...[/i]) instead of the image.
 
 The folder should be [i]Mods/KitsunePosters/ModInfo.xml[/i]. Unzipping can add an extra folder ([i]Mods/KitsunePosters-1.5.0/KitsunePosters/...[/i]), and the game silently skips the mod when it's nested like that.
 
@@ -79,3 +91,5 @@ The folder should be [i]Mods/KitsunePosters/ModInfo.xml[/i]. Unzipping can add a
 [line]
 
 [center][size=3]Built for 7 Days to Die V3.4. Part of the [color=#FF8C1A]Kitsune Den[/color] mod family. 🦊[/size][/center]
+
+[center][url=https://kitsuneden.net/discord][img]https://staticdelivery.nexusmods.com/mods/1059/images/10059/10059-1791719130-1696820202.jpg[/img][/url][/center]
